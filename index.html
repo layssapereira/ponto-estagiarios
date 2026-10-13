@@ -58,7 +58,7 @@
     <p id="lm" class="msg bad" style="color:var(--bad); margin-top:10px;"></p>
     <p class="note" style="margin-top:12px">
       Supervisor(a): <b>Layssa</b> / Senha: <b>123</b><br>
-      Estagiários: Lucas, Maria Js, Caua, Felipe, Isa, Ana, Jullya, Yaskara, Caio (Treinamento), Pina, Camilli, Juan, Enzo / Senha: <b>123</b>
+      Estagiários: Lucas, Maria Js, Caua, Felipe, Isa, Ana, Jullya, Yaskara, Caio, Pina, Camilli, Juan, Enzo / Senha: <b>123</b>
     </p>
   </div>
 
@@ -101,9 +101,6 @@
     const hm = m => m == null ? '—' : Math.floor(m / 60) + 'h' + pad(m % 60);
     const tm = m => m == null ? '—' : pad(Math.floor(m / 60)) + ':' + pad(Math.floor(m % 60));
     const br = d => d.split('-').reverse().join('/');
-    const now = new Date();
-    let from = iso(new Date(now.getFullYear(), now.getMonth(), 1));
-    let to = iso(new Date(now.getFullYear(), now.getMonth() + 1, 0));
     let S = { nome: '', senha: '', role: '' }, msg = '';
 
     function saveDB() {
@@ -112,7 +109,7 @@
     }
 
     function fazerLogin(e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
       const nomeIn = \$('#ln').value;
       const senhaIn = \$('#ls').value;
       
@@ -124,6 +121,8 @@
       }
       
       S = { nome: u.nome, senha: u.senha, role: u.role };
+      localStorage.setItem('ponto_sessao', JSON.stringify(S));
+      
       \$('#login').style.display = 'none';
       \$('#app').style.display = '';
       \$('#who').textContent = u.nome;
@@ -133,12 +132,8 @@
     }
 
     function sair() {
-      S = { nome: '', senha: '', role: '' };
-      \$('#app').style.display = 'none';
-      \$('#login').style.display = '';
-      \$('#ln').value = '';
-      \$('#ls').value = '';
-      \$('#lm').textContent = '';
+      localStorage.removeItem('ponto_sessao');
+      location.reload();
     }
 
     function dayMap(list) {
@@ -162,6 +157,9 @@
     }
 
     function weekdays() {
+      const now = new Date();
+      let from = iso(new Date(now.getFullYear(), now.getMonth(), 1));
+      let to = iso(new Date(now.getFullYear(), now.getMonth() + 1, 0));
       const a = [], d = new Date(from + 'T12:00'), f = new Date(to + 'T12:00');
       while (d <= f && a.length < 93) {
         if (d.getDay() % 6) a.push(iso(d));
@@ -271,6 +269,16 @@
           </table>
         </div>`;
     }
+
+    // Auto-login se já estiver gravado
+    try {
+      const saved = JSON.parse(localStorage.getItem('ponto_sessao') || 'null');
+      if (saved && saved.nome) {
+        \$('#ln').value = saved.nome;
+        \$('#ls').value = saved.senha;
+        fazerLogin();
+      }
+    } catch(err) {}
   </script>
 </main>
 </body>
