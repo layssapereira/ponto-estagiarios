@@ -309,8 +309,34 @@ async function carregarRegistrosSupabase() {
 }
 
 function periodoAtual() {
-  const inicio = new Date(2026, 9, 20, 12, 0, 0);
-  const fim = new Date(2026, 10, 19, 12, 0, 0);
+  const hoje = new Date();
+  hoje.setHours(12, 0, 0, 0);
+
+  const primeiroInicio = new Date(2026, 9, 20, 12, 0, 0);
+  let inicio;
+
+  if (hoje < primeiroInicio) {
+    inicio = primeiroInicio;
+  } else {
+    inicio = new Date(
+      hoje.getFullYear(),
+      hoje.getMonth(),
+      20,
+      12, 0, 0
+    );
+
+    if (hoje < inicio) {
+      inicio.setMonth(inicio.getMonth() - 1);
+    }
+  }
+
+  const fim = new Date(
+    inicio.getFullYear(),
+    inicio.getMonth() + 1,
+    19,
+    12, 0, 0
+  );
+
   return { inicio, fim };
 }
 
