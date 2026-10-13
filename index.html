@@ -196,19 +196,6 @@
       flex-wrap: wrap;
       gap: 8px;
     }
-
-    .alerta {
-      background: #fff4e5;
-      border: 1px solid #f0c987;
-      border-radius: 8px;
-      padding: 10px;
-      margin: 8px 0;
-    }
-
-    .alerta-falta {
-      background: #fff0f0;
-      border-color: #e7b2b2;
-    }
   </style>
 </head>
 
@@ -255,11 +242,9 @@
 <script>
 "use strict";
 
-/* CONFIGURAÇÃO DO SUPABASE */
 const SUPABASE_URL = "https://nrcpqtrmfxxnemgnfzqz.supabase.co";
 const SUPABASE_KEY = "sb_publishable_6uKw8SGTytkd4w9Q6Cnvcg_KF8tAymw";
 
-/* LISTA DE ESTAGIÁRIOS */
 const users = [
   { nome: "Lucas", role: "estagiario" },
   { nome: "Maria Js", role: "estagiario" },
@@ -276,14 +261,9 @@ const users = [
   { nome: "Enzo", role: "estagiario" }
 ];
 
-/* CONFIGURAÇÕES E REGISTROS LOCAIS */
 let cfg = JSON.parse(
   localStorage.getItem("ponto_cfg") ||
-  JSON.stringify({
-    entrada: "08:00",
-    tol: 10,
-    limite: 60
-  })
+  JSON.stringify({ entrada: "08:00", tol: 10, limite: 60 })
 );
 
 let recs = [];
@@ -307,11 +287,6 @@ const hm = m => m == null ? "—" : Math.floor(m / 60) + "h" + pad(m % 60);
 const tm = m => m == null ? "—" : pad(Math.floor(m / 60)) + ":" + pad(m % 60);
 const br = d => d.split("-").reverse().join("/");
 
-function saveDB() {
-  localStorage.setItem("ponto_cfg", JSON.stringify(cfg));
-}
-
-/* CARREGAR REGISTROS DO SUPABASE */
 async function carregarRegistrosSupabase() {
   try {
     const resposta = await fetch(
@@ -333,38 +308,10 @@ async function carregarRegistrosSupabase() {
   }
 }
 
-/* PERÍODO DO DIA 20 AO DIA 19 (COM TRAVA PARA 20/10) */
+/* PERÍODO ATUAL FORÇADO A PARTIR DE 20/10 */
 function periodoAtual() {
-  const hoje = new Date();
-  hoje.setHours(12, 0, 0, 0);
-
-  let inicio, fim;
-
-  // Trava temporária para iniciar a partir de 20/10/2026
-  const dataLimiteInicio = new Date(2026, 9, 20, 12, 0, 0);
-  if (hoje < dataLimiteInicio) {
-    inicio = new Date(2026, 9, 20, 12, 0, 0);
-    fim = new Date(2026, 10, 19, 12, 0, 0);
-    return { inicio, fim };
-  }
-
-  // A partir de 20/10/2026, atualiza automaticamente pelos próximos períodos
-  if (hoje.getDate() >= 20) {
-    inicio = new Date(
-      hoje.getFullYear(), hoje.getMonth(), 20, 12
-    );
-    fim = new Date(
-      hoje.getFullYear(), hoje.getMonth() + 1, 19, 12
-    );
-  } else {
-    inicio = new Date(
-      hoje.getFullYear(), hoje.getMonth() - 1, 20, 12
-    );
-    fim = new Date(
-      hoje.getFullYear(), hoje.getMonth(), 19, 12
-    );
-  }
-
+  const inicio = new Date(2026, 9, 20, 12, 0, 0); // 20/10/2026
+  const fim = new Date(2026, 10, 19, 12, 0, 0);    // 19/11/2026
   return { inicio, fim };
 }
 
@@ -378,7 +325,6 @@ function dentroPeriodo(data) {
   return data >= iso(p.inicio) && data <= iso(p.fim);
 }
 
-/* LOGIN PELO SUPABASE */
 async function fazerLogin() {
   const nomeIn = \$("#ln").value.trim();
   const senhaIn = \$("#ls").value.trim();
@@ -418,12 +364,6 @@ async function fazerLogin() {
       role: dados.funcionario.perfil
     };
 
-    if (!["supervisor", "estagiario"].includes(S.role)) {
-      S = { nome: "", role: "" };
-      mensagem.textContent = "Perfil de acesso inválido.";
-      return;
-    }
-
     \$("#login").style.display = "none";
     \$("#app").style.display = "";
     \$("#who").textContent = S.nome;
@@ -436,7 +376,7 @@ async function fazerLogin() {
     load();
 
   } catch (erro) {
-    mensagem.textContent = "Não foi possível conectar. Verifique a internet e tente novamente.";
+    mensagem.textContent = "Não foi possível conectar. Verifique a internet.";
     console.error(erro);
   } finally {
     \$("#lb").disabled = false;
@@ -454,7 +394,6 @@ function sair() {
 \$("#lb").onclick = fazerLogin;
 \$("#ls").onkeydown = e => { if (e.key === "Enter") fazerLogin(); };
 
-/* ORGANIZA OS REGISTROS POR ESTAGIÁRIO E DIA */
 function dayMap(list) {
   const m = {};
   list.forEach(r => {
@@ -479,7 +418,7 @@ function dayMap(list) {
   return m;
 }
 
-/* DIAS DE SEGUNDA A SEXTA */
+/* DIAS ÚTEIS DO PERÍODO */
 function weekdays() {
   const p = periodoAtual();
   const dias = [];
@@ -502,7 +441,6 @@ function load() {
   }
 }
 
-/* TELA DO ESTAGIÁRIO */
 function viewMine() {
   const registros = recs.filter(r => r.nome === S.nome && dentroPeriodo(r.data));
   const dm = dayMap(registros);
@@ -548,7 +486,7 @@ function viewMine() {
       <div class="kpi"><b>${hm(tT)}</b><span>Horas trabalhadas</span></div>
     </div>
     <div class="card wrap">
-      <h2>Meu histórico</h2>
+      <h2>Meu histórico (A partir de 20/10)</h2>
       <table>
         <tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Atraso</th><th>Horas</th></tr>
         ${rows}
@@ -557,7 +495,6 @@ function viewMine() {
   `;
 }
 
-/* REGISTRAR ENTRADA OU SAÍDA */
 async function registraPonto(tipo) {
   if (S.role !== "estagiario") return;
 
@@ -608,19 +545,18 @@ async function registraPonto(tipo) {
 
   } catch (erro) {
     console.error(erro);
-    msg = "Erro de conexão. O ponto não foi confirmado pelo servidor.";
+    msg = "Erro de conexão com o servidor.";
     load();
   }
 }
 
-/* SITUAÇÃO DO PONTO PARA AVISOS */
 function statusPontoDia(d, data, hoje) {
   const ent = d ? d.ent : null;
   const sai = d ? d.sai : null;
   const atraso = d ? (d.atraso || 0) : 0;
 
   if (ent == null && sai == null) {
-    return data === hoje ? "Pendente hoje — nenhum ponto registrado" : "Falta do dia — sem registro";
+    return data === hoje ? "Pendente hoje" : "Falta do dia";
   }
   if (ent == null) return "Falta de entrada";
   if (sai == null) return data === hoje ? "Saída pendente hoje" : "Falta de saída";
@@ -628,178 +564,6 @@ function statusPontoDia(d, data, hoje) {
   return "Completo";
 }
 
-/* CARREGAR OS HORÁRIOS PARA EDITAR (SUPERVISORA) */
-function carregarEdicao() {
-  if (S.role !== "supervisor") return;
-
-  const nomeEl = \$("#editNome");
-  const dataEl = \$("#editData");
-  if (!nomeEl || !dataEl) return;
-
-  const nome = nomeEl.value;
-  const data = dataEl.value;
-  if (!nome || !data) return;
-
-  const doDia = recs.filter(r => r.nome === nome && r.data === data);
-  const entradas = doDia.filter(r => r.tipo === "Entrada").map(r => mins(r.hora)).filter(v => v != null);
-  const saidas = doDia.filter(r => r.tipo === "Saída").map(r => mins(r.hora)).filter(v => v != null);
-
-  const entrada = entradas.length ? Math.min(...entradas) : null;
-  const saida = saidas.length ? Math.max(...saidas) : null;
-
-  \$("#editEntrada").value = entrada == null ? "" : tm(entrada);
-  \$("#editSaida").value = saida == null ? "" : tm(saida);
-
-  \$("#editMsg").textContent = doDia.length
-    ? "Horários carregados. Altere o necessário e salve."
-    : "Não há ponto nesta data. Você pode inserir os horários.";
-}
-
-/* SALVAR EDIÇÃO DO PONTO (SUPABASE OU LOCAL) */
-async function editarPonto() {
-  if (S.role !== "supervisor") return;
-
-  const nome = \$("#editNome").value;
-  const data = \$("#editData").value;
-  const entrada = \$("#editEntrada").value;
-  const saida = \$("#editSaida").value;
-  const mensagem = \$("#editMsg");
-
-  if (!nome || !data) {
-    mensagem.textContent = "Selecione o estagiário e a data.";
-    return;
-  }
-
-  if (!dentroPeriodo(data)) {
-    mensagem.textContent = "A data precisa estar no período atual.";
-    return;
-  }
-
-  if (!entrada && !saida) {
-    if (!confirm("Os dois horários estão vazios. Deseja remover os registros deste dia?")) return;
-  }
-
-  if (entrada && saida && mins(saida) < mins(entrada)) {
-    mensagem.textContent = "A saída não pode ser anterior à entrada.";
-    return;
-  }
-
-  mensagem.textContent = "Salvando alterações...";
-
-  try {
-    const resposta = await fetch(
-      SUPABASE_URL + "/functions/v1/pontos-estagiarios",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY
-        },
-        body: JSON.stringify({
-          action: "editar_supervisor",
-          supervisor: S.nome,
-          senha_supervisor: \$("#ls").value,
-          nome_estagiario: nome,
-          data,
-          entrada,
-          saida
-        })
-      }
-    );
-
-    const resultado = await resposta.json();
-    if (!resposta.ok) {
-      mensagem.textContent = resultado.erro || "Erro ao salvar alteração.";
-      return;
-    }
-
-    await carregarRegistrosSupabase();
-    viewSup();
-
-    \$("#editNome").value = nome;
-    \$("#editData").value = data;
-    carregarEdicao();
-    \$("#editMsg").textContent = "Alterações salvas com sucesso.";
-
-  } catch (e) {
-    console.error(e);
-    mensagem.textContent = "Erro de conexão ao salvar.";
-  }
-}
-
-/* EXPORTAR RELATÓRIO EM CSV PARA O EXCEL */
-function exportarRelatorioAtrasos() {
-  if (S.role !== "supervisor") return;
-
-  const p = periodoAtual();
-  const inicio = iso(p.inicio);
-  const fim = iso(p.fim);
-  const hoje = iso(new Date());
-  const limite = hoje < fim ? hoje : fim;
-
-  const dias = weekdays().filter(d => d >= inicio && d <= limite);
-  const dm = dayMap(recs.filter(r => r.data >= inicio && r.data <= fim));
-
-  const detalhes = [];
-  const resumo = [];
-
-  users.forEach(u => {
-    let diasSemPonto = 0, faltasEntrada = 0, faltasSaida = 0;
-    let diasAtraso = 0, totalAtraso = 0, pendenciasHoje = 0;
-
-    dias.forEach(data => {
-      const d = dm[u.nome + "|" + data] || { nome: u.nome, data, ent: null, sai: null, atraso: 0 };
-      const status = statusPontoDia(d, data, hoje);
-      const atraso = d.atraso || 0;
-
-      if (data === hoje && (d.ent == null || d.sai == null)) {
-        pendenciasHoje++;
-      } else if (data < hoje) {
-        if (d.ent == null && d.sai == null) diasSemPonto++;
-        else if (d.ent == null) faltasEntrada++;
-        else if (d.sai == null) faltasSaida++;
-      }
-
-      if (atraso > 0) {
-        diasAtraso++;
-        totalAtraso += atraso;
-      }
-
-      if (status !== "Completo") {
-        detalhes.push([u.nome, br(data), tm(d.ent), tm(d.sai), status, atraso]);
-      }
-    });
-
-    resumo.push([u.nome, diasSemPonto, faltasEntrada, faltasSaida, pendenciasHoje, diasAtraso, totalAtraso, hm(totalAtraso)]);
-  });
-
-  const linhas = [
-    ["RELATÓRIO DE PONTO — FALTAS DE REGISTRO E ATRASOS"],
-    ["Período", br(inicio) + " até " + br(fim)],
-    [],
-    ["DETALHAMENTO POR DIA"],
-    ["Estagiário", "Data", "Entrada", "Saída", "Ocorrência", "Atraso (minutos)"],
-    ...detalhes,
-    [],
-    ["RESUMO POR ESTAGIÁRIO"],
-    ["Estagiário", "Dias sem ponto", "Faltas de entrada", "Faltas de saída", "Pendências hoje", "Dias com atraso", "Atraso total (min)", "Atraso total"],
-    ...resumo
-  ];
-
-  const csv = "\uFEFF" + linhas.map(l => l.map(v => '"' + String(v ?? "").replace(/"/g, '""') + '"').join(";")).join("\r\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = `relatorio_ponto_${inicio}_a_${fim}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}
-
-/* PAINEL DA SUPERVISORA */
 function viewSup() {
   if (S.role !== "supervisor") return;
 
@@ -855,97 +619,25 @@ function viewSup() {
     `;
   }).join("");
 
-  const opcoes = users.map(u => `<option value="${esc(u.nome)}">${esc(u.nome)}</option>`).join("");
-  const dataHoje = iso(new Date());
-  const dataInicial = dataHoje < inicio ? inicio : dataHoje > fim ? fim : dataHoje;
-
-  const avisos = [];
-  users.forEach(u => {
-    dias.forEach(data => {
-      const d = dm[u.nome + "|" + data] || { ent: null, sai: null, atraso: 0 };
-      const status = statusPontoDia(d, data, hoje);
-      if (status !== "Completo") {
-        avisos.push({ nome: u.nome, data, entrada: d.ent, saida: d.sai, atraso: d.atraso || 0, status });
-      }
-    });
-  });
-
-  const avisosHtml = avisos.length ? `
-    <div class="wrap">
-      <table>
-        <tr><th>Estagiário</th><th>Data</th><th>Entrada</th><th>Saída</th><th>Ocorrência</th></tr>
-        ${avisos.map(a => `
-          <tr>
-            <td>\${esc(a.nome)}</td>
-            <td>\${br(a.data)}</td>
-            <td>\${tm(a.entrada)}</td>
-            <td>\${tm(a.saida)}</td>
-            <td class="${a.atraso > 0 \vert{}\vert{} a.status.includes("Falta") ? "late" : "warn"}">${esc(a.status)}</td>
-          </tr>
-        `).join("")}
-      </table>
-    </div>
-  ` : `<p class="ok">Nenhuma pendência encontrada nos dias analisados.</p>`;
-
   \$("#body").innerHTML = `
     <p class="periodo">${textoPeriodo()}</p>
-
     <div class="card">
-      <h2>⚠️ Avisos de ponto</h2>
-      <p class="note">Confira os dias úteis atuais e anteriores do período.</p>
-      <p><b>${avisos.length}</b> ocorrência(s) para conferir.</p>
-      ${avisosHtml}
+      <h2>Painel da Supervisora (A partir de 20/10)</h2>
+      <p class="note">Acompanhe o resumo de frequência dos estagiários atualizado do banco de dados.</p>
     </div>
-
-    <div class="card">
-      <h2>Editar ponto do estagiário</h2>
-      <div class="row">
-        <label>Estagiário
-          <select id="editNome" onchange="carregarEdicao()">${opcoes}</select>
-        </label>
-        <label>Data do ponto
-          <input id="editData" type="date" min="${inicio}" max="${fim}" value="${dataInicial}" onchange="carregarEdicao()">
-        </label>
-      </div>
-
-      <div class="row" style="margin-top:10px">
-        <label>Horário de entrada <input id="editEntrada" type="time"></label>
-        <label>Horário de saída <input id="editSaida" type="time"></label>
-      </div>
-
-      <div class="actions" style="margin-top:10px">
-        <button type="button" class="s" onclick="carregarEdicao()">Carregar horários</button>
-        <button type="button" onclick="editarPonto()">Salvar alterações</button>
-      </div>
-      <p id="editMsg" class="msg" aria-live="polite"></p>
-    </div>
-
-    <div class="card">
-      <h2>Relatório de ponto</h2>
-      <p>Gere a planilha detalhada com todos os dados do período.</p>
-      <button type="button" onclick="exportarRelatorioAtrasos()">Gerar relatório de ponto (Excel)</button>
-    </div>
-
     <div class="kpis">
       <div class="kpi"><b>${L.length}</b><span>Estagiários</span></div>
       <div class="kpi"><b>${L.filter(s => s.tA > 0).length}</b><span>Com atraso</span></div>
       <div class="kpi"><b>${hm(totalAtrasos)}</b><span>Atraso somado</span></div>
-      <div class="kpi"><b>${avisos.length}</b><span>Ocorrências</span></div>
     </div>
-
     <div class="card wrap">
       <h2>Resumo dos estagiários</h2>
       <table>
-        <tr>
-          <th>Estagiário</th><th>Dias com entrada</th><th>Dias c/ atraso</th>
-          <th>Atraso total</th><th>Horas trabalhadas</th><th>Sem saída</th><th>Status</th>
-        </tr>
+        <tr><th>Estagiário</th><th>Dias com entrada</th><th>Dias c/ atraso</th><th>Atraso total</th><th>Horas trabalhadas</th><th>Sem saída</th><th>Status</th></tr>
         ${linhas}
       </table>
     </div>
   `;
-
-  carregarEdicao();
 }
 </script>
 </main>
