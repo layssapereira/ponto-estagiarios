@@ -1,443 +1,1283 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Folha de Ponto – Estagiários</title>
-<style>
-:root{--bg:#f5f6f8;--card:#fff;--tx:#1c2630;--mut:#66727f;--bd:#dfe3e8;--ac:#2563eb;--bad:#c62828;--ok:#2e7d32;--warn:#b26a00}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,sans-serif}
-main{max-width:1100px;margin:auto;padding:16px}
-h1{font-size:21px;margin:0}
-h2{font-size:17px}
-.sub{color:var(--mut);margin:3px 0 14px;font-size:13px}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
-label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px;width:100%}
-input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:9px;width:100%;margin-top:3px}
-button{font:inherit;border:0;border-radius:8px;padding:10px 15px;background:var(--ac);color:white;cursor:pointer;font-weight:600;margin-top:8px}
-button:disabled{opacity:.55;cursor:wait}
-button.s{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
-.wrap{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
-th{font-size:12px;color:var(--mut)}
-.late,.bad{color:var(--bad);font-weight:600}.ok{color:var(--ok)}.warn{color:var(--warn)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
-.kpi{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
-.kpi b{display:block;font-size:22px}.kpi span,.note{font-size:12px;color:var(--mut)}
-.msg{margin:10px 0 0;font-weight:600;overflow-wrap:anywhere}
-#login{max-width:390px;margin:40px auto}
-.actions{display:flex;flex-wrap:wrap;gap:8px}
-.actions button{margin-top:0}
-.chip{padding:2px 8px;border-radius:99px;font-size:12px;border:1px solid currentColor}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Folha de Ponto – Estagiários</title>
+
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --card: #fff;
+      --tx: #1c2630;
+      --mut: #66727f;
+      --bd: #dfe3e8;
+      --ac: #2563eb;
+      --bad: #c62828;
+      --ok: #2e7d32;
+      --warn: #b26a00;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--tx);
+      font: 15px/1.45 system-ui, -apple-system, sans-serif;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h1 { font-size: 20px; margin: 0; }
+    h2 { font-size: 17px; margin-top: 0; }
+
+    .sub {
+      color: var(--mut);
+      margin: 2px 0 14px;
+      font-size: 13px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      color: var(--mut);
+      gap: 3px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    input, select {
+      font: inherit;
+      color: var(--tx);
+      background: var(--bg);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 9px;
+      width: 100%;
+      margin-top: 3px;
+    }
+
+    button {
+      font: inherit;
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 15px;
+      background: var(--ac);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    button.s {
+      background: var(--bg);
+      color: var(--tx);
+      border: 1px solid var(--bd);
+    }
+
+    .wrap { overflow-x: auto; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--bd);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 12px;
+      color: var(--mut);
+      font-weight: 600;
+    }
+
+    .late, .bad {
+      color: var(--bad);
+      font-weight: 600;
+    }
+
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .kpi b {
+      display: block;
+      font-size: 22px;
+    }
+
+    .kpi span {
+      font-size: 12px;
+      color: var(--mut);
+    }
+
+    .chip {
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 12px;
+      border: 1px solid currentColor;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--mut);
+    }
+
+    .msg {
+      margin: 10px 0 0;
+      font-weight: 600;
+    }
+
+    .periodo {
+      font-weight: 600;
+      color: var(--ac);
+      margin: 0 0 12px;
+    }
+
+    details summary { cursor: pointer; }
+
+    #login {
+      max-width: 380px;
+      margin: 40px auto;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .alerta {
+      background: #fff4e5;
+      border: 1px solid #f0c987;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 8px 0;
+    }
+
+    .alerta-falta {
+      background: #fff0f0;
+      border-color: #e7b2b2;
+    }
+  </style>
 </head>
+
 <body>
 <main>
-  <section id="login" class="card">
+
+  <div id="login" class="card">
     <h1>Folha de Ponto</h1>
     <p class="sub">Entre com seu nome e sua senha.</p>
-    <label>Nome
-      <input id="ln" autocomplete="username" placeholder="Digite seu nome">
-    </label>
-    <label style="margin-top:10px">Senha
-      <input id="ls" type="password" autocomplete="current-password" placeholder="123">
-    </label>
-    <button id="lb" style="width:100%">Entrar</button>
-    <p id="lm" class="msg bad"></p>
-    <p class="note">Supervisoras: Layssa e Damiana. Senha de acesso: 123.</p>
-  </section>
 
-  <section id="app" style="display:none">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <label>Nome completo
+        <input id="ln" type="text"
+          placeholder="Digite seu nome"
+          autocomplete="username">
+      </label>
+
+      <label>Senha
+        <input id="ls" type="password"
+          placeholder="Digite sua senha"
+          autocomplete="current-password">
+      </label>
+
+      <button type="button" id="lb">Entrar</button>
+    </div>
+
+    <p id="lm" class="msg bad"></p>
+
+    <p class="note" style="margin-top:12px">
+      Supervisora: <b>Layssa</b><br>
+      Estagiários: Lucas, Maria Js, Caua, Felipe, Isa, Ana,
+      Jullya, Yaskara, Caio, Pina, Camilli, Juan e Enzo.
+    </p>
+  </div>
+
+  <div id="app" style="display:none">
     <div class="top">
       <div>
         <h1 id="who"></h1>
-        <p id="role" class="sub"></p>
+        <p class="sub" id="role"></p>
       </div>
       <button class="s" onclick="sair()">Sair</button>
     </div>
-    <p id="status" class="msg"></p>
+
     <div id="body"></div>
-  </section>
-</main>
+  </div>
 
 <script>
 "use strict";
 
-const SUPABASE_URL = "https://nrcpqtrmfxxnemgnfzqz.supabase.co";
-const SUPABASE_KEY = "sb_publishable_6uKw8SGTytkd4w9Q6Cnvc_g_KF8tAymw";
-const LOGIN_URL = SUPABASE_URL + "/functions/v1/login-estagiarios";
-const PONTOS_URL = SUPABASE_URL + "/functions/v1/pontos-estagiarios";
+/* CONFIGURAÇÃO DO SUPABASE */
+const SUPABASE_URL =
+  "https://nrcpqtrmfxxnemgnfzqz.supabase.co";
 
-const NOMES_ESTAGIARIOS = [
-  "Lucas", "Maria Js", "Caua", "Felipe", "Isa", "Ana",
-  "Jullya", "Yaskara", "Caio (Treinamento)", "Pina",
-  "Camilli", "Juan", "Enzo"
+const SUPABASE_KEY =
+  "sb_publishable_6uKw8SGTytkd4w9Q6Cnvcg_KF8tAymw";
+
+/* LISTA DE ESTAGIÁRIOS */
+const users = [
+  { nome: "Lucas", role: "estagiario" },
+  { nome: "Maria Js", role: "estagiario" },
+  { nome: "Caua", role: "estagiario" },
+  { nome: "Felipe", role: "estagiario" },
+  { nome: "Isa", role: "estagiario" },
+  { nome: "Ana", role: "estagiario" },
+  { nome: "Jullya", role: "estagiario" },
+  { nome: "Yaskara", role: "estagiario" },
+  { nome: "Caio (Treinamento)", role: "estagiario" },
+  { nome: "Pina", role: "estagiario" },
+  { nome: "Camilli", role: "estagiario" },
+  { nome: "Juan", role: "estagiario" },
+  { nome: "Enzo", role: "estagiario" }
 ];
 
-const INICIO_APURACAO = "2026-10-20";
-const CFG = { entrada: "08:00", tolerancia: 10, limite: 60 };
+/* CONFIGURAÇÕES E REGISTROS LOCAIS */
+let cfg = JSON.parse(
+  localStorage.getItem("ponto_cfg") ||
+  JSON.stringify({
+    entrada: "08:00",
+    tol: 10,
+    limite: 60
+  })
+);
 
-const $ = s => document.querySelector(s);
-const pad = n => String(n).padStart(2, "0");
-const iso = d => d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
-  "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-}[c]));
-const mins = t => {
-  if (!t) return null;
-  const [h,m] = String(t).slice(0,5).split(":").map(Number);
-  return h*60+m;
-};
-const tm = m => m == null ? "—" : pad(Math.floor(m/60))+":"+pad(m%60);
-const hm = m => m == null ? "—" : Math.floor(m/60)+"h"+pad(m%60);
-const br = d => String(d).slice(0,10).split("-").reverse().join("/");
+let recs = JSON.parse(
+  localStorage.getItem("ponto_recs") || "[]"
+);
 
-let S = null;
-let senhaAtual = "";
-let recs = [];
+let S = { nome: "", role: "" };
 let msg = "";
 
-async function chamar(url, payload) {
-  const resp = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": SUPABASE_KEY
-    },
-    body: JSON.stringify(payload)
-  });
+const $ = s => document.querySelector(s);
 
-  let json;
-  try { json = await resp.json(); }
-  catch { throw new Error("O servidor retornou uma resposta inválida."); }
+const pad = n => String(n).padStart(2, "0");
 
-  const dados = json.dados || json.data || json;
+const iso = d =>
+  d.getFullYear() + "-" +
+  pad(d.getMonth() + 1) + "-" +
+  pad(d.getDate());
 
-  if (!resp.ok || dados.sucesso === false || json.sucesso === false) {
-    throw new Error(dados.erro || json.erro || json.message || "Não foi possível completar a operação.");
-  }
-  return dados;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;"
+}[c]));
+
+const mins = t => {
+  if (!t) return null;
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+};
+
+const hm = m =>
+  m == null
+    ? "—"
+    : Math.floor(m / 60) + "h" + pad(m % 60);
+
+const tm = m =>
+  m == null
+    ? "—"
+    : pad(Math.floor(m / 60)) + ":" + pad(m % 60);
+
+const br = d => d.split("-").reverse().join("/");
+
+function saveDB() {
+  localStorage.setItem("ponto_recs", JSON.stringify(recs));
+  localStorage.setItem("ponto_cfg", JSON.stringify(cfg));
 }
 
-async function fazerLogin() {
-  const nome = $("#ln").value.trim();
-  const senha = $("#ls").value.trim();
-  $("#lm").textContent = "";
+/* PERÍODO DO DIA 20 AO DIA 19 */
+function periodoAtual() {
+  const hoje = new Date();
+  hoje.setHours(12, 0, 0, 0);
 
-  if (!nome || !senha) {
-    $("#lm").textContent = "Digite seu nome e sua senha.";
+  let inicio, fim;
+
+  if (hoje.getDate() >= 20) {
+    inicio = new Date(
+      hoje.getFullYear(), hoje.getMonth(), 20, 12
+    );
+
+    fim = new Date(
+      hoje.getFullYear(), hoje.getMonth() + 1, 19, 12
+    );
+  } else {
+    inicio = new Date(
+      hoje.getFullYear(), hoje.getMonth() - 1, 20, 12
+    );
+
+    fim = new Date(
+      hoje.getFullYear(), hoje.getMonth(), 19, 12
+    );
+  }
+
+  return { inicio, fim };
+}
+
+function textoPeriodo() {
+  const p = periodoAtual();
+
+  return "Período: " +
+    br(iso(p.inicio)) + " até " + br(iso(p.fim));
+}
+
+function dentroPeriodo(data) {
+  const p = periodoAtual();
+
+  return data >= iso(p.inicio) &&
+    data <= iso(p.fim);
+}
+
+/* LOGIN PELO SUPABASE */
+async function fazerLogin() {
+  const nomeIn = $("#ln").value.trim();
+  const senhaIn = $("#ls").value.trim();
+  const mensagem = $("#lm");
+
+  if (!nomeIn || !senhaIn) {
+    mensagem.textContent = "Informe seu nome e sua senha.";
     return;
   }
 
+  mensagem.textContent = "Verificando login...";
   $("#lb").disabled = true;
-  $("#lb").textContent = "Entrando...";
 
   try {
-    const resposta = await chamar(LOGIN_URL, { nome, senha });
-    const funcionario = resposta.funcionario || resposta.dados?.funcionario;
+    const resposta = await fetch(
+      SUPABASE_URL + "/functions/v1/login-estagiarios",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          nome: nomeIn,
+          senha: senhaIn
+        })
+      }
+    );
 
-    if (!funcionario || !funcionario.nome || !funcionario.perfil) {
-      throw new Error("Resposta do login incompleta. Confira a função login-estagiarios.");
+    const dados = await resposta.json();
+
+    if (
+      !resposta.ok ||
+      !dados.sucesso ||
+      !dados.funcionario
+    ) {
+      mensagem.textContent =
+        dados.erro || "Nome ou senha incorretos.";
+      return;
     }
 
     S = {
-      nome: funcionario.nome,
-      role: funcionario.perfil
+      nome: dados.funcionario.nome,
+      role: dados.funcionario.perfil
     };
-    senhaAtual = senha;
+
+    if (!["supervisor", "estagiario"].includes(S.role)) {
+      S = { nome: "", role: "" };
+      mensagem.textContent = "Perfil de acesso inválido.";
+      return;
+    }
 
     $("#login").style.display = "none";
     $("#app").style.display = "";
     $("#who").textContent = S.nome;
-    $("#role").textContent = S.role === "supervisor"
-      ? "Painel das Supervisoras"
-      : "Meu Ponto";
 
-    await atualizarPontos();
-  } catch (e) {
-    $("#lm").textContent = e.message || "Falha no login.";
+    $("#role").textContent =
+      S.role === "supervisor"
+        ? "Painel da Supervisora"
+        : "Meu Ponto";
+
+    msg = "";
+    mensagem.textContent = "";
+    load();
+
+  } catch (erro) {
+    mensagem.textContent =
+      "Não foi possível conectar. Verifique a internet e tente novamente.";
+    console.error(erro);
+
   } finally {
     $("#lb").disabled = false;
-    $("#lb").textContent = "Entrar";
   }
 }
-
-$("#lb").addEventListener("click", fazerLogin);
-$("#ls").addEventListener("keydown", e => {
-  if (e.key === "Enter") fazerLogin();
-});
 
 function sair() {
-  S = null;
-  senhaAtual = "";
-  recs = [];
+  S = { nome: "", role: "" };
+
   $("#ls").value = "";
-  $("#login").style.display = "";
   $("#app").style.display = "none";
+  $("#login").style.display = "";
   $("#lm").textContent = "";
-  $("#status").textContent = "";
-  $("#body").innerHTML = "";
 }
 
-function periodoAtual() {
-  const hoje = new Date();
-  const dia = hoje.getDate();
-  let ano = hoje.getFullYear();
-  let mes = hoje.getMonth();
+$("#lb").onclick = fazerLogin;
 
-  if (dia < 20) mes--;
-  const inicio = new Date(ano, mes, 20, 12);
-  const fim = new Date(ano, mes + 1, 19, 12);
+$("#ls").onkeydown = e => {
+  if (e.key === "Enter") fazerLogin();
+};
 
-  return { inicio: iso(inicio), fim: iso(fim) };
-}
-
-function noPeriodo(data) {
-  const p = periodoAtual();
-  return data >= p.inicio && data <= p.fim && data >= INICIO_APURACAO;
-}
-
-async function atualizarPontos() {
-  if (!S) return;
-  $("#status").textContent = "Carregando registros da nuvem...";
-
-  try {
-    const resposta = await chamar(PONTOS_URL, {
-      action: "listar",
-      nome: S.nome,
-      senha: senhaAtual
-    });
-    recs = Array.isArray(resposta.pontos) ? resposta.pontos : [];
-    $("#status").textContent = "Registros sincronizados com o Supabase.";
-    load();
-  } catch (e) {
-    $("#status").textContent = "Erro ao carregar: " + (e.message || "tente novamente.");
-  }
-}
-
+/* ORGANIZA OS REGISTROS POR ESTAGIÁRIO E DIA */
 function dayMap(list) {
   const m = {};
-  list.filter(r => noPeriodo(String(r.data).slice(0,10))).forEach(r => {
-    const data = String(r.data).slice(0,10);
-    const chave = r.nome + "|" + data;
-    const d = m[chave] = m[chave] || {
-      nome: r.nome, data, ent: null, sai: null
+
+  list.forEach(r => {
+    const k = r.nome + "|" + r.data;
+
+    const d = m[k] = m[k] || {
+      nome: r.nome,
+      data: r.data,
+      ent: null,
+      sai: null
     };
+
     const t = mins(r.hora);
+
+    if (t == null) return;
+
     if (r.tipo === "Entrada") {
       if (d.ent == null || t < d.ent) d.ent = t;
-    } else if (r.tipo === "Saída") {
+    }
+
+    if (r.tipo === "Saída") {
       if (d.sai == null || t > d.sai) d.sai = t;
     }
   });
 
   Object.values(m).forEach(d => {
-    const atraso = d.ent == null ? 0 : d.ent - mins(CFG.entrada);
-    d.atraso = atraso > CFG.tolerancia ? atraso : 0;
-    d.trab = d.ent != null && d.sai != null && d.sai >= d.ent
-      ? d.sai - d.ent : null;
+    const atraso = d.ent == null
+      ? 0
+      : d.ent - mins(cfg.entrada);
+
+    d.atraso = atraso > cfg.tol ? atraso : 0;
+
+    d.trab =
+      d.ent != null &&
+      d.sai != null &&
+      d.sai >= d.ent
+        ? d.sai - d.ent
+        : null;
   });
+
   return m;
 }
 
-function diasUteisPeriodo() {
+/* DIAS DE SEGUNDA A SEXTA */
+function weekdays() {
   const p = periodoAtual();
-  const inicio = new Date(Math.max(
-    new Date(p.inicio + "T12:00:00").getTime(),
-    new Date(INICIO_APURACAO + "T12:00:00").getTime()
-  ));
-  const fim = new Date(p.fim + "T12:00:00");
   const dias = [];
+  const d = new Date(p.inicio);
 
-  for (let d = inicio; d <= fim; d.setDate(d.getDate()+1)) {
-    if (d.getDay() !== 0 && d.getDay() !== 6) dias.push(iso(d));
+  while (d <= p.fim) {
+    if (d.getDay() !== 0 && d.getDay() !== 6) {
+      dias.push(iso(d));
+    }
+
+    d.setDate(d.getDate() + 1);
   }
+
   return dias;
 }
 
 function load() {
-  if (!S) return;
-  if (S.role === "supervisor") viewSup();
-  else viewMine();
-}
-
-function viewMine() {
-  const meus = recs.filter(r => r.nome === S.nome);
-  const dm = dayMap(meus);
-  const dias = diasUteisPeriodo();
-  let atrasoTotal = 0, diasAtraso = 0, horas = 0;
-
-  const rows = dias.map(data => {
-    const x = dm[S.nome + "|" + data] || {};
-    if (x.atraso) { atrasoTotal += x.atraso; diasAtraso++; }
-    horas += x.trab || 0;
-
-    return `<tr>
-      <td>${br(data)}</td>
-      <td>${tm(x.ent)}</td>
-      <td>${tm(x.sai)}</td>
-      <td class="${x.atraso ? "late" : ""}">${
-        x.ent == null ? "—" : x.atraso ? x.atraso + " min" : "No horário"
-      }</td>
-      <td>${hm(x.trab)}</td>
-    </tr>`;
-  }).join("");
-
-  $("#body").innerHTML = `
-    <div class="card">
-      <h2>Registrar ponto</h2>
-      <p class="note">Período: ${br(periodoAtual().inicio)} a ${br(periodoAtual().fim)}. Apuração a partir de 20/10/2026.</p>
-      <div class="actions">
-        <button id="entradaBtn" onclick="registraPonto('Entrada')">Registrar entrada</button>
-        <button id="saidaBtn" class="s" onclick="registraPonto('Saída')">Registrar saída</button>
-        <button class="s" onclick="atualizarPontos()">Atualizar registros</button>
-      </div>
-      <p id="msg" class="msg">${esc(msg)}</p>
-    </div>
-    <div class="kpis">
-      <div class="kpi"><b>${hm(atrasoTotal)}</b><span>Atraso total</span></div>
-      <div class="kpi"><b>${diasAtraso}</b><span>Dias com atraso</span></div>
-      <div class="kpi"><b>${hm(horas)}</b><span>Horas trabalhadas</span></div>
-    </div>
-    <div class="card wrap">
-      <h2>Meu espelho de ponto</h2>
-      <table>
-        <thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Atraso</th><th>Horas</th></tr></thead>
-        <tbody>${rows || '<tr><td colspan="5">Nenhum dia no período.</td></tr>'}</tbody>
-      </table>
-    </div>`;
-}
-
-async function registraPonto(tipo) {
-  if (!S) return;
-  if (tipo !== "Entrada" && tipo !== "Saída") return;
-
-  const botao = tipo === "Entrada" ? $("#entradaBtn") : $("#saidaBtn");
-  if (botao) botao.disabled = true;
-
-  try {
-    const agora = new Date();
-    const data = iso(agora);
-    const hora = pad(agora.getHours()) + ":" + pad(agora.getMinutes()) + ":00";
-
-    if (data < INICIO_APURACAO) {
-      throw new Error("A apuração começa em 20/10/2026. O registro não foi enviado.");
-    }
-
-    const resposta = await chamar(PONTOS_URL, {
-      action: "registrar",
-      nome: S.nome,
-      senha: senhaAtual,
-      tipo,
-      data,
-      hora
-    });
-
-    msg = tipo + " registrada às " + hora.slice(0,5) + ".";
-    await atualizarPontos();
-  } catch (e) {
-    msg = "Não foi possível registrar: " + (e.message || "tente novamente.");
-    const el = $("#msg");
-    if (el) el.textContent = msg;
-  } finally {
-    if (botao) botao.disabled = false;
+  if (S.role === "supervisor") {
+    viewSup();
+  } else if (S.role === "estagiario") {
+    viewMine();
   }
 }
 
-function viewSup() {
-  const dm = dayMap(recs);
-  const lista = NOMES_ESTAGIARIOS.map(nome => ({
-    nome, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, faltas: 0
-  }));
-  const porNome = Object.fromEntries(lista.map(x => [x.nome, x]));
+/* TELA DO ESTAGIÁRIO */
+function viewMine() {
+  const registros = recs.filter(r =>
+    r.nome === S.nome && dentroPeriodo(r.data)
+  );
 
-  Object.values(dm).forEach(d => {
-    if (!porNome[d.nome]) return;
-    const s = porNome[d.nome];
-    if (d.ent == null) return;
-    s.dias++;
-    s.tT += d.trab || 0;
-    if (d.sai == null) s.sem++;
-    if (d.atraso) { s.nA++; s.tA += d.atraso; }
-  });
+  const dm = dayMap(registros);
+  const ds = weekdays();
 
-  const totalAtraso = lista.reduce((n, x) => n + x.tA, 0);
-  const totalComAtraso = lista.filter(x => x.tA > 0).length;
-  const body = lista.map(s => {
-    const st = s.tA > CFG.limite
-      ? ["Crítico", "bad"]
-      : s.tA > 0 ? ["Atenção", "warn"] : ["Em dia", "ok"];
+  let tA = 0;
+  let nA = 0;
+  let tT = 0;
 
-    return `<tr>
-      <td>${esc(s.nome)}</td>
-      <td>${s.dias}</td>
-      <td>${s.nA}</td>
-      <td class="${s.tA ? "late" : ""}">${hm(s.tA)}</td>
-      <td>${hm(s.tT)}</td>
-      <td>${s.sem || "—"}</td>
-      <td><span class="chip ${st[1]}">${st[0]}</span></td>
-    </tr>`;
+  const rows = ds.map(dia => {
+    const x = dm[S.nome + "|" + dia] || {};
+    const ent = x.ent ?? null;
+    const sai = x.sai ?? null;
+
+    if (x.atraso) {
+      tA += x.atraso;
+      nA++;
+    }
+
+    tT += x.trab || 0;
+
+    return `
+      <tr>
+        <td>${br(dia)}</td>
+        <td>${tm(ent)}</td>
+        <td>${tm(sai)}</td>
+        <td class="${x.atraso ? "late" : ""}">
+          ${
+            ent == null
+              ? "—"
+              : x.atraso
+                ? x.atraso + " min"
+                : "No horário"
+          }
+        </td>
+        <td>${hm(x.trab)}</td>
+      </tr>
+    `;
   }).join("");
 
   $("#body").innerHTML = `
+    <p class="periodo">${textoPeriodo()}</p>
+
     <div class="card">
-      <h2>Painel das Supervisoras</h2>
-      <p class="note">Período de apuração: ${br(periodoAtual().inicio)} a ${br(periodoAtual().fim)}. Os dados vêm do Supabase.</p>
+      <h2>Registrar ponto</h2>
+
+      <p>Use os botões para registrar seu horário atual.</p>
+
       <div class="actions">
-        <button onclick="atualizarPontos()">Atualizar registros</button>
-        <button class="s" onclick="exportarCSV()">Exportar CSV para Excel</button>
+        <button type="button"
+          onclick="registraPonto('Entrada')">
+          Registrar entrada
+        </button>
+
+        <button type="button"
+          onclick="registraPonto('Saída')">
+          Registrar saída
+        </button>
+      </div>
+
+      <p class="msg">${esc(msg)}</p>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <b>${hm(tA)}</b>
+        <span>Atraso total</span>
+      </div>
+
+      <div class="kpi">
+        <b>${nA}</b>
+        <span>Dias com atraso</span>
+      </div>
+
+      <div class="kpi">
+        <b>${hm(tT)}</b>
+        <span>Horas trabalhadas</span>
       </div>
     </div>
-    <div class="kpis">
-      <div class="kpi"><b>${lista.length}</b><span>Estagiários</span></div>
-      <div class="kpi"><b>${totalComAtraso}</b><span>Com atraso</span></div>
-      <div class="kpi"><b>${hm(totalAtraso)}</b><span>Atraso somado</span></div>
-    </div>
+
     <div class="card wrap">
+      <h2>Meu histórico</h2>
+
       <table>
-        <thead><tr><th>Estagiário</th><th>Dias com entrada</th><th>Dias com atraso</th><th>Atraso total</th><th>Horas trabalhadas</th><th>Sem saída</th><th>Status</th></tr></thead>
-        <tbody>${body}</tbody>
+        <tr>
+          <th>Data</th>
+          <th>Entrada</th>
+          <th>Saída</th>
+          <th>Atraso</th>
+          <th>Horas</th>
+        </tr>
+
+        ${rows}
       </table>
     </div>
-    <div class="card wrap">
-      <h2>Registros individuais</h2>
-      <table>
-        <thead><tr><th>Data</th><th>Hora</th><th>Estagiário</th><th>Tipo</th></tr></thead>
-        <tbody>${recs
-          .filter(r => noPeriodo(String(r.data).slice(0,10)))
-          .slice()
-          .sort((a,b) => (String(b.data)+String(b.hora)).localeCompare(String(a.data)+String(a.hora)))
-          .map(r => `<tr><td>${br(r.data)}</td><td>${esc(String(r.hora).slice(0,5))}</td><td>${esc(r.nome)}</td><td>${esc(r.tipo)}</td></tr>`)
-          .join("") || '<tr><td colspan="4">Nenhum registro neste período.</td></tr>'}</tbody>
-      </table>
-    </div>`;
+  `;
 }
 
-function exportarCSV() {
-  if (!S || S.role !== "supervisor") return;
+/* REGISTRAR ENTRADA OU SAÍDA */
+function registraPonto(tipo) {
+  if (S.role !== "estagiario") return;
+
+  const agora = new Date();
+  const data = iso(agora);
+  const hora =
+    pad(agora.getHours()) + ":" + pad(agora.getMinutes());
+
+  if (!dentroPeriodo(data)) {
+    msg = "A data atual está fora do período de apuração.";
+    load();
+    return;
+  }
+
+  const registrosDia = recs.filter(r =>
+    r.nome === S.nome &&
+    r.data === data &&
+    r.tipo === tipo
+  );
+
+  if (registrosDia.length) {
+    msg = "Você já registrou " + tipo.toLowerCase() +
+      " hoje. Procure a supervisora se precisar corrigir.";
+    load();
+    return;
+  }
+
+  recs.push({
+    data,
+    hora,
+    nome: S.nome,
+    tipo
+  });
+
+  saveDB();
+
+  msg = tipo + " registrada às " + hora + ".";
+  load();
+}
+
+/* SITUAÇÃO DO PONTO PARA OS AVISOS E O RELATÓRIO */
+function statusPontoDia(d, data, hoje) {
+  const ent = d ? d.ent : null;
+  const sai = d ? d.sai : null;
+  const atraso = d ? (d.atraso || 0) : 0;
+
+  if (ent == null && sai == null) {
+    return data === hoje
+      ? "Pendente hoje — nenhum ponto registrado"
+      : "Falta do dia — sem registro";
+  }
+
+  if (ent == null) {
+    return "Falta de entrada";
+  }
+
+  if (sai == null) {
+    return data === hoje
+      ? "Saída pendente hoje"
+      : "Falta de saída";
+  }
+
+  if (atraso > 0) {
+    return "Atraso de " + atraso + " minutos";
+  }
+
+  return "Completo";
+}
+
+/* CARREGAR OS HORÁRIOS PARA EDITAR */
+function carregarEdicao() {
+  if (S.role !== "supervisor") return;
+
+  const nomeEl = $("#editNome");
+  const dataEl = $("#editData");
+
+  if (!nomeEl || !dataEl) return;
+
+  const nome = nomeEl.value;
+  const data = dataEl.value;
+
+  if (!nome || !data) return;
+
+  const doDia = recs.filter(r =>
+    r.nome === nome && r.data === data
+  );
+
+  const entradas = doDia
+    .filter(r => r.tipo === "Entrada")
+    .map(r => mins(r.hora))
+    .filter(v => v != null);
+
+  const saidas = doDia
+    .filter(r => r.tipo === "Saída")
+    .map(r => mins(r.hora))
+    .filter(v => v != null);
+
+  const entrada = entradas.length
+    ? Math.min(...entradas)
+    : null;
+
+  const saida = saidas.length
+    ? Math.max(...saidas)
+    : null;
+
+  $("#editEntrada").value =
+    entrada == null ? "" : tm(entrada);
+
+  $("#editSaida").value =
+    saida == null ? "" : tm(saida);
+
+  $("#editMsg").textContent = doDia.length
+    ? "Horários carregados. Altere o necessário e salve."
+    : "Não há ponto nesta data. Você pode inserir os horários.";
+}
+
+/* SALVAR EDIÇÃO DO PONTO */
+function editarPonto() {
+  if (S.role !== "supervisor") return;
+
+  const nome = $("#editNome").value;
+  const data = $("#editData").value;
+  const entrada = $("#editEntrada").value;
+  const saida = $("#editSaida").value;
+
+  const mensagem = $("#editMsg");
+
+  if (!nome || !data) {
+    mensagem.textContent = "Selecione o estagiário e a data.";
+    return;
+  }
+
+  if (!dentroPeriodo(data)) {
+    mensagem.textContent =
+      "A data precisa estar no período atual.";
+    return;
+  }
+
+  if (!entrada && !saida) {
+    const confirmar = confirm(
+      "Os dois horários estão vazios. Isso removerá os registros " +
+      "de entrada e saída deste dia. Deseja continuar?"
+    );
+
+    if (!confirmar) return;
+  }
+
+  if (entrada && saida && mins(saida) < mins(entrada)) {
+    mensagem.textContent =
+      "A saída não pode ser anterior à entrada.";
+    return;
+  }
+
+  recs = recs.filter(r =>
+    !(
+      r.nome === nome &&
+      r.data === data &&
+      (r.tipo === "Entrada" || r.tipo === "Saída")
+    )
+  );
+
+  if (entrada) {
+    recs.push({
+      nome,
+      data,
+      hora: entrada,
+      tipo: "Entrada"
+    });
+  }
+
+  if (saida) {
+    recs.push({
+      nome,
+      data,
+      hora: saida,
+      tipo: "Saída"
+    });
+  }
+
+  saveDB();
+
+  msg = "Ponto atualizado para " + nome +
+    " em " + br(data) + ".";
+
+  viewSup();
+
+  const editNome = $("#editNome");
+  const editData = $("#editData");
+
+  if (editNome) editNome.value = nome;
+  if (editData) editData.value = data;
+
+  carregarEdicao();
+
+  if ($("#editMsg")) {
+    $("#editMsg").textContent = "Alterações salvas com sucesso.";
+  }
+}
+
+/* EXPORTAR DETALHAMENTO E RESUMO EM CSV PARA O EXCEL */
+function exportarRelatorioAtrasos() {
+  if (S.role !== "supervisor") return;
+
+  const p = periodoAtual();
+  const inicio = iso(p.inicio);
+  const fim = iso(p.fim);
+  const hoje = iso(new Date());
+  const limite = hoje < fim ? hoje : fim;
+
+  const dias = weekdays().filter(d =>
+    d >= inicio && d <= limite
+  );
+
+  const dm = dayMap(
+    recs.filter(r => r.data >= inicio && r.data <= fim)
+  );
+
+  const detalhes = [];
+  const resumo = [];
+
+  users.forEach(u => {
+    let diasSemPonto = 0;
+    let faltasEntrada = 0;
+    let faltasSaida = 0;
+    let diasAtraso = 0;
+    let totalAtraso = 0;
+    let pendenciasHoje = 0;
+
+    dias.forEach(data => {
+      const d = dm[u.nome + "|" + data] || {
+        nome: u.nome,
+        data,
+        ent: null,
+        sai: null,
+        atraso: 0
+      };
+
+      const status = statusPontoDia(d, data, hoje);
+      const atraso = d.atraso || 0;
+
+      if (data === hoje && (d.ent == null || d.sai == null)) {
+        pendenciasHoje++;
+      } else if (data < hoje) {
+        if (d.ent == null && d.sai == null) {
+          diasSemPonto++;
+        } else if (d.ent == null) {
+          faltasEntrada++;
+        } else if (d.sai == null) {
+          faltasSaida++;
+        }
+      }
+
+      if (atraso > 0) {
+        diasAtraso++;
+        totalAtraso += atraso;
+      }
+
+      if (status !== "Completo") {
+        detalhes.push([
+          u.nome,
+          br(data),
+          tm(d.ent),
+          tm(d.sai),
+          status,
+          atraso
+        ]);
+      }
+    });
+
+    resumo.push([
+      u.nome,
+      diasSemPonto,
+      faltasEntrada,
+      faltasSaida,
+      pendenciasHoje,
+      diasAtraso,
+      totalAtraso,
+      hm(totalAtraso)
+    ]);
+  });
 
   const linhas = [
-    ["Data", "Hora", "Estagiário", "Tipo"],
-    ...recs
-      .filter(r => noPeriodo(String(r.data).slice(0,10)))
-      .map(r => [r.data, String(r.hora).slice(0,5), r.nome, r.tipo])
+    ["RELATÓRIO DE PONTO — FALTAS DE REGISTRO E ATRASOS"],
+    ["Período", br(inicio) + " até " + br(fim)],
+    ["Critério", "Segunda a sexta-feira; feriados não são excluídos automaticamente."],
+    [],
+    ["DETALHAMENTO POR DIA"],
+    [
+      "Estagiário",
+      "Data",
+      "Entrada",
+      "Saída",
+      "Ocorrência",
+      "Atraso (minutos)"
+    ],
+    ...detalhes,
+    [],
+    ["RESUMO POR ESTAGIÁRIO"],
+    [
+      "Estagiário",
+      "Dias anteriores sem nenhum ponto",
+      "Faltas de entrada",
+      "Faltas de saída",
+      "Pendências de hoje",
+      "Dias com atraso",
+      "Atraso total (minutos)",
+      "Atraso total"
+    ],
+    ...resumo,
+    [],
+    [
+      "TOTAL DE MINUTOS DE ATRASO",
+      resumo.reduce((total, r) => total + r[6], 0)
+    ]
   ];
+
   const csv = "\uFEFF" + linhas.map(linha =>
-    linha.map(v => '"' + String(v ?? "").replace(/"/g, '""') + '"').join(";")
+    linha.map(valor =>
+      '"' + String(valor ?? "").replace(/"/g, '""') + '"'
+    ).join(";")
   ).join("\r\n");
 
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const arquivo = new Blob([csv], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(arquivo);
   const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "folha_de_ponto.csv";
+
+  link.href = url;
+  link.download =
+    `relatorio_ponto_${inicio}_a_${fim}.csv`;
+
+  document.body.appendChild(link);
   link.click();
-  URL.revokeObjectURL(link.href);
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* PAINEL DA SUPERVISORA */
+function viewSup() {
+  if (S.role !== "supervisor") return;
+
+  const p = periodoAtual();
+  const inicio = iso(p.inicio);
+  const fim = iso(p.fim);
+  const hoje = iso(new Date());
+  const limite = hoje < fim ? hoje : fim;
+
+  const registros = recs.filter(r =>
+    r.data >= inicio && r.data <= fim
+  );
+
+  const dm = dayMap(registros);
+  const dias = weekdays().filter(d =>
+    d >= inicio && d <= limite
+  );
+
+  const g = {};
+
+  users.forEach(u => {
+    g[u.nome] = {
+      nome: u.nome,
+      dias: 0,
+      nA: 0,
+      tA: 0,
+      tT: 0,
+      sem: 0,
+      lista: []
+    };
+  });
+
+  Object.values(dm).forEach(d => {
+    const s = g[d.nome] = g[d.nome] || {
+      nome: d.nome,
+      dias: 0,
+      nA: 0,
+      tA: 0,
+      tT: 0,
+      sem: 0,
+      lista: []
+    };
+
+    if (d.ent == null) return;
+
+    s.dias++;
+    s.tT += d.trab || 0;
+
+    if (d.trab == null) s.sem++;
+
+    if (d.atraso > 0) {
+      s.nA++;
+      s.tA += d.atraso;
+      s.lista.push(
+        br(d.data) + " – entrada " + tm(d.ent) +
+        " (" + d.atraso + " min)"
+      );
+    }
+  });
+
+  const L = Object.values(g).sort((a, b) => b.tA - a.tA);
+
+  const totalAtrasos = L.reduce(
+    (total, s) => total + s.tA, 0
+  );
+
+  const linhas = L.map(s => {
+    const status = s.tA > cfg.limite
+      ? ["Crítico", "bad"]
+      : s.tA > 0
+        ? ["Atenção", "warn"]
+        : ["Em dia", "ok"];
+
+    return `
+      <tr>
+        <td>
+          <details>
+            <summary>${esc(s.nome)}</summary>
+            <div class="note">
+              ${
+                s.lista.length
+                  ? s.lista.map(esc).join("<br>")
+                  : "Nenhum atraso neste período."
+              }
+            </div>
+          </details>
+        </td>
+        <td>${s.dias}</td>
+        <td>${s.nA}</td>
+        <td class="${s.tA ? "late" : ""}">${hm(s.tA)}</td>
+        <td>${hm(s.tT)}</td>
+        <td>${s.sem || "—"}</td>
+        <td>
+          <span class="chip ${status[1]}">${status[0]}</span>
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  const opcoes = users.map(u =>
+    `<option value="${esc(u.nome)}">${esc(u.nome)}</option>`
+  ).join("");
+
+  const dataHoje = iso(new Date());
+  const dataInicial = dataHoje < inicio
+    ? inicio
+    : dataHoje > fim ? fim : dataHoje;
+
+  /* MONTAR AVISOS DE HOJE E DOS DIAS ANTERIORES */
+  const avisos = [];
+
+  users.forEach(u => {
+    dias.forEach(data => {
+      const d = dm[u.nome + "|" + data] || {
+        ent: null,
+        sai: null,
+        atraso: 0
+      };
+
+      const status = statusPontoDia(d, data, hoje);
+
+      if (status !== "Completo") {
+        avisos.push({
+          nome: u.nome,
+          data,
+          entrada: d.ent,
+          saida: d.sai,
+          atraso: d.atraso || 0,
+          status
+        });
+      }
+    });
+  });
+
+  const avisosHtml = avisos.length
+    ? `
+      <div class="wrap">
+        <table>
+          <tr>
+            <th>Estagiário</th>
+            <th>Data</th>
+            <th>Entrada</th>
+            <th>Saída</th>
+            <th>Ocorrência</th>
+          </tr>
+
+          ${avisos.map(a => `
+            <tr>
+              <td>${esc(a.nome)}</td>
+              <td>${br(a.data)}</td>
+              <td>${tm(a.entrada)}</td>
+              <td>${tm(a.saida)}</td>
+              <td class="${
+                a.atraso > 0 || a.status.includes("Falta")
+                  ? "late"
+                  : "warn"
+              }">${esc(a.status)}</td>
+            </tr>
+          `).join("")}
+        </table>
+      </div>
+    `
+    : `<p class="ok">Nenhuma pendência encontrada nos dias analisados.</p>`;
+
+  $("#body").innerHTML = `
+    <p class="periodo">${textoPeriodo()}</p>
+
+    <div class="card">
+      <h2>⚠️ Avisos de ponto</h2>
+
+      <p class="note">
+        Confira os dias úteis atuais e anteriores do período.
+        Feriados não são descontados automaticamente.
+        O dia de hoje aparece como pendente enquanto faltar algum horário.
+      </p>
+
+      <p>
+        <b>${avisos.length}</b> ocorrência(s) para conferir.
+      </p>
+
+      ${avisosHtml}
+    </div>
+
+    <div class="card">
+      <h2>Editar ponto do estagiário</h2>
+
+      <p class="note">
+        Selecione o estagiário e a data para carregar os horários.
+        Altere os campos e salve.
+      </p>
+
+      <div class="row">
+        <label>Estagiário
+          <select id="editNome" onchange="carregarEdicao()">
+            ${opcoes}
+          </select>
+        </label>
+
+        <label>Data do ponto
+          <input id="editData" type="date"
+            min="${inicio}" max="${fim}"
+            value="${dataInicial}"
+            onchange="carregarEdicao()">
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <label>Horário de entrada
+          <input id="editEntrada" type="time">
+        </label>
+
+        <label>Horário de saída
+          <input id="editSaida" type="time">
+        </label>
+      </div>
+
+      <div class="actions" style="margin-top:10px">
+        <button type="button" class="s"
+          onclick="carregarEdicao()">
+          Carregar horários
+        </button>
+
+        <button type="button"
+          onclick="editarPonto()">
+          Salvar alterações
+        </button>
+      </div>
+
+      <p id="editMsg" class="msg" aria-live="polite"></p>
+    </div>
+
+    <div class="card">
+      <h2>Relatório de ponto</h2>
+
+      <p>
+        O arquivo inclui faltas de registro, pendências de hoje,
+        atrasos e resumo por estagiário.
+      </p>
+
+      <button type="button"
+        onclick="exportarRelatorioAtrasos()">
+        Gerar relatório de ponto (Excel)
+      </button>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <b>${L.length}</b>
+        <span>Estagiários</span>
+      </div>
+
+      <div class="kpi">
+        <b>${L.filter(s => s.tA > 0).length}</b>
+        <span>Com atraso</span>
+      </div>
+
+      <div class="kpi">
+        <b>${hm(totalAtrasos)}</b>
+        <span>Atraso somado</span>
+      </div>
+
+      <div class="kpi">
+        <b>${avisos.length}</b>
+        <span>Ocorrências para conferir</span>
+      </div>
+    </div>
+
+    <div class="card wrap">
+      <h2>Resumo dos estagiários</h2>
+
+      <table>
+        <tr>
+          <th>Estagiário</th>
+          <th>Dias com entrada</th>
+          <th>Dias c/ atraso</th>
+          <th>Atraso total</th>
+          <th>Horas trabalhadas</th>
+          <th>Sem saída</th>
+          <th>Status</th>
+        </tr>
+
+        ${linhas}
+      </table>
+    </div>
+  `;
+
+  carregarEdicao();
 }
 </script>
+</main>
 </body>
 </html>
