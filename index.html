@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -92,7 +93,7 @@
     let cfg = JSON.parse(localStorage.getItem('ponto_cfg') || JSON.stringify({ entrada: '08:00', tol: 10, limite: 60 }));
     let recs = JSON.parse(localStorage.getItem('ponto_recs') || '[]');
 
-    const \$ = s => document.querySelector(s), pad = n => String(n).padStart(2, '0');
+    const $ = s => document.querySelector(s), pad = n => String(n).padStart(2, '0');
     const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const mins = t => { if (!t) return null; const [h, m] = t.split(':').map(Number); return h * 60 + m; };
@@ -107,23 +108,23 @@
     }
 
     function fazerLogin() {
-      const nomeIn = \$('#ln').value;
-      const senhaIn = \$('#ls').value;
-      
+      const nomeIn = $('#ln').value;
+      const senhaIn = $('#ls').value;
+
       const u = users.find(x => x.nome.trim().toLowerCase() === String(nomeIn).trim().toLowerCase() && x.senha === String(senhaIn).trim());
-      
+
       if (!u) {
-        \$('#lm').textContent = 'Utilizador ou senha incorretos.';
+        $('#lm').textContent = 'Utilizador ou senha incorretos.';
         return;
       }
-      
+
       S = { nome: u.nome, senha: u.senha, role: u.role };
       localStorage.setItem('ponto_sessao', JSON.stringify(S));
-      
-      \$('#login').style.display = 'none';
-      \$('#app').style.display = '';
-      \$('#who').textContent = u.nome;
-      \$('#role').textContent = u.role === 'supervisor' ? 'Painel do Supervisor' : 'Meu Ponto';
+
+      $('#login').style.display = 'none';
+      $('#app').style.display = '';
+      $('#who').textContent = u.nome;
+      $('#role').textContent = u.role === 'supervisor' ? 'Painel do Supervisor' : 'Meu Ponto';
       load();
     }
 
@@ -132,8 +133,8 @@
       location.reload();
     }
 
-    \$('#lb').onclick = fazerLogin;
-    \$('#ls').onkeydown = e => { if (e.key === 'Enter') fazerLogin(); };
+    $('#lb').onclick = fazerLogin;
+    $('#ls').onkeydown = e => { if (e.key === 'Enter') fazerLogin(); };
 
     function dayMap(list) {
       const m = {};
@@ -147,6 +148,7 @@
           if (d.sai == null || t > d.sai) d.sai = t;
         }
       });
+
       Object.values(m).forEach(d => {
         const a = d.ent == null ? 0 : d.ent - mins(cfg.entrada);
         d.atraso = a > cfg.tol ? a : 0;
@@ -174,10 +176,12 @@
     function viewMine() {
       const dm = dayMap(recs), ds = weekdays();
       let tA = 0, nA = 0, tT = 0;
+
       const rows = ds.map(d => {
         const x = dm[S.nome + '|' + d] || {};
         if (x.atraso) { tA += x.atraso; nA++; }
         tT += x.trab || 0;
+
         return `<tr>
           <td>${br(d)}</td>
           <td>${tm(x.ent)}</td>
@@ -187,7 +191,7 @@
         </tr>`;
       }).join('');
 
-      \$('#body').innerHTML = `
+      $('#body').innerHTML = `
         <div class="card">
           <div class="row" style="gap:10px">
             <button type="button" class="s" onclick="registraPonto('Entrada')">Registrar entrada</button>
@@ -222,14 +226,17 @@
       const dm = dayMap(recs), interns = users.filter(u => u.role === 'estagiario').map(u => u.nome);
       const g = {};
       interns.forEach(n => g[n] = { nome: n, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, lista: [] });
-      
+
       Object.values(dm).forEach(d => {
         const s = g[d.nome] = g[d.nome] || { nome: d.nome, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, lista: [] };
         if (d.ent == null) return;
-        s.dias++; s.tT += d.trab || 0;
+        s.dias++;
+        s.tT += d.trab || 0;
         if (d.trab == null) s.sem++;
+
         if (d.atraso) {
-          s.nA++; s.tA += d.atraso;
+          s.nA++;
+          s.tA += d.atraso;
           s.lista.push(br(d.data) + ' – ' + tm(d.ent) + ' (' + d.atraso + ' min)');
         }
       });
@@ -239,6 +246,7 @@
 
       const body = L.map(s => {
         const st = s.tA > cfg.limite ? ['Crítico', 'bad'] : s.tA > 0 ? ['Atenção', 'warn'] : ['Em dia', 'ok'];
+
         return `<tr>
           <td>
             <details>
@@ -255,7 +263,7 @@
         </tr>`;
       }).join('');
 
-      \$('#body').innerHTML = `
+      $('#body').innerHTML = `
         <div class="kpis">
           <div class="kpi"><b>${L.length}</b><span>Estagiários</span></div>
           <div class="kpi"><b>${L.filter(s => s.tA > 0).length}</b><span>Com atraso</span></div>
@@ -272,11 +280,13 @@
     try {
       const saved = JSON.parse(localStorage.getItem('ponto_sessao') || 'null');
       if (saved && saved.nome) {
-        \$('#ln').value = saved.nome;
-        \$('#ls').value = saved.senha;
+        $('#ln').value = saved.nome;
+        $('#ls').value = saved.senha;
         fazerLogin();
       }
-    } catch(err) {}
+    } catch (err) {
+      console.error('Erro ao recuperar sessão:', err);
+    }
   </script>
 </main>
 </body>
