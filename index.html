@@ -17,9 +17,9 @@
     .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
     .card { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
     .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-    label { display: flex; flex-direction: column; font-size: 12px; color: var(--mut); gap: 3px; }
-    input { font: inherit; color: var(--tx); background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 7px 9px; width: 100%; }
-    button { font: inherit; border: 0; border-radius: 8px; padding: 10px 15px; background: var(--ac); color: #fff; cursor: pointer; font-weight: 600; width: 100%; margin-top: 8px; }
+    label { display: flex; flex-direction: column; font-size: 12px; color: var(--mut); gap: 3px; width: 100%; }
+    input { font: inherit; color: var(--tx); background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 7px 9px; width: 100%; margin-top: 3px; }
+    button { font: inherit; border: 0; border-radius: 8px; padding: 10px 15px; background: var(--ac); color: #fff; cursor: pointer; font-weight: 600; width: 100%; margin-top: 12px; }
     button.s { background: var(--bg); color: var(--tx); border: 1px solid var(--bd); width: auto; margin-top: 0; }
     .wrap { overflow-x: auto; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; }
@@ -44,17 +44,15 @@
   <div id="login" class="card">
     <h1>Folha de Ponto</h1>
     <p class="sub">Entre com seu nome completo e sua senha.</p>
-    <form id="fLogin" onsubmit="return fazerLogin(event)">
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <label>Nome completo
-          <input id="ln" type="text" required placeholder="Ex: Layssa">
-        </label>
-        <label>Senha
-          <input id="ls" type="password" required placeholder="123">
-        </label>
-        <button type="submit" id="lb">Entrar</button>
-      </div>
-    </form>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <label>Nome completo
+        <input id="ln" type="text" placeholder="Ex: Layssa">
+      </label>
+      <label>Senha
+        <input id="ls" type="password" placeholder="123">
+      </label>
+      <button type="button" id="lb">Entrar</button>
+    </div>
     <p id="lm" class="msg bad" style="color:var(--bad); margin-top:10px;"></p>
     <p class="note" style="margin-top:12px">
       Supervisor(a): <b>Layssa</b> / Senha: <b>123</b><br>
@@ -108,8 +106,7 @@
       localStorage.setItem('ponto_cfg', JSON.stringify(cfg));
     }
 
-    function fazerLogin(e) {
-      if (e) e.preventDefault();
+    function fazerLogin() {
       const nomeIn = \$('#ln').value;
       const senhaIn = \$('#ls').value;
       
@@ -117,7 +114,7 @@
       
       if (!u) {
         \$('#lm').textContent = 'Utilizador ou senha incorretos.';
-        return false;
+        return;
       }
       
       S = { nome: u.nome, senha: u.senha, role: u.role };
@@ -128,13 +125,15 @@
       \$('#who').textContent = u.nome;
       \$('#role').textContent = u.role === 'supervisor' ? 'Painel do Supervisor' : 'Meu Ponto';
       load();
-      return false;
     }
 
     function sair() {
       localStorage.removeItem('ponto_sessao');
       location.reload();
     }
+
+    \$('#lb').onclick = fazerLogin;
+    \$('#ls').onkeydown = e => { if (e.key === 'Enter') fazerLogin(); };
 
     function dayMap(list) {
       const m = {};
@@ -270,7 +269,6 @@
         </div>`;
     }
 
-    // Auto-login se já estiver gravado
     try {
       const saved = JSON.parse(localStorage.getItem('ponto_sessao') || 'null');
       if (saved && saved.nome) {
