@@ -9,14 +9,8 @@
       --bg: #f5f6f8; --card: #fff; --tx: #1c2630; --mut: #66727f; --bd: #dfe3e8;
       --ac: #2563eb; --bad: #c62828; --ok: #2e7d32; --warn: #b26a00;
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #13171c; --card: #1d232a; --tx: #e8ecf0; --mut: #9aa6b2; --bd: #2f3740;
-        --ac: #6ea0ff; --bad: #ff7b7b; --ok: #76d17b; --warn: #f0b04a;
-      }
-    }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.45 system-ui, -apple-system, sans-serif; }
     main { max-width: 980px; margin: 0 auto; padding: 16px; }
     h1 { font-size: 20px; margin: 0; }
     .sub { color: var(--mut); margin: 2px 0 14px; font-size: 13px; }
@@ -24,10 +18,9 @@
     .card { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
     .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
     label { display: flex; flex-direction: column; font-size: 12px; color: var(--mut); gap: 3px; }
-    input { font: inherit; color: var(--tx); background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 7px 9px; min-width: 0; }
-    button { font: inherit; border: 0; border-radius: 8px; padding: 9px 15px; background: var(--ac); color: #fff; cursor: pointer; }
-    button.s { background: var(--bg); color: var(--tx); border: 1px solid var(--bd); }
-    button:disabled { opacity: .5; cursor: default; }
+    input { font: inherit; color: var(--tx); background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 7px 9px; width: 100%; }
+    button { font: inherit; border: 0; border-radius: 8px; padding: 10px 15px; background: var(--ac); color: #fff; cursor: pointer; font-weight: 600; width: 100%; margin-top: 8px; }
+    button.s { background: var(--bg); color: var(--tx); border: 1px solid var(--bd); width: auto; margin-top: 0; }
     .wrap { overflow-x: auto; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; }
     th, td { padding: 7px 8px; border-bottom: 1px solid var(--bd); text-align: left; white-space: nowrap; }
@@ -51,13 +44,22 @@
   <div id="login" class="card">
     <h1>Folha de Ponto</h1>
     <p class="sub">Entre com seu nome completo e sua senha.</p>
-    <div class="row" style="flex-direction:column;align-items:stretch">
-      <label>Nome completo<input id="ln" autocomplete="name" placeholder="Ex: Layssa"></label>
-      <label>Senha<input id="ls" type="password" autocomplete="current-password" placeholder="123"></label>
-      <button id="lb">Entrar</button>
-    </div>
-    <p id="lm" class="msg bad"></p>
-    <p class="note" style="margin-top:12px">Supervisor(a): <b>Layssa</b> / Senha: <b>123</b><br>Estagiários: Lucas, Maria Js, Caua, Felipe, Isa, Ana, Jullya, Yaskara, Caio (Treinamento), Pina, Camilli, Juan, Enzo / Senha: <b>123</b></p>
+    <form id="fLogin" onsubmit="return fazerLogin(event)">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <label>Nome completo
+          <input id="ln" type="text" required placeholder="Ex: Layssa">
+        </label>
+        <label>Senha
+          <input id="ls" type="password" required placeholder="123">
+        </label>
+        <button type="submit" id="lb">Entrar</button>
+      </div>
+    </form>
+    <p id="lm" class="msg bad" style="color:var(--bad); margin-top:10px;"></p>
+    <p class="note" style="margin-top:12px">
+      Supervisor(a): <b>Layssa</b> / Senha: <b>123</b><br>
+      Estagiários: Lucas, Maria Js, Caua, Felipe, Isa, Ana, Jullya, Yaskara, Caio (Treinamento), Pina, Camilli, Juan, Enzo / Senha: <b>123</b>
+    </p>
   </div>
 
   <div id="app" style="display:none">
@@ -66,7 +68,7 @@
         <h1 id="who"></h1>
         <p class="sub" id="role"></p>
       </div>
-      <button class="s" id="out">Sair</button>
+      <button class="s" onclick="sair()">Sair</button>
     </div>
     <div id="body"></div>
   </div>
@@ -97,7 +99,7 @@
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const mins = t => { if (!t) return null; const [h, m] = t.split(':').map(Number); return h * 60 + m; };
     const hm = m => m == null ? '—' : Math.floor(m / 60) + 'h' + pad(m % 60);
-    const tm = m => m == null ? '—' : pad(Math.floor(m / 60)) + ':' + pad(m % 60);
+    const tm = m => m == null ? '—' : pad(Math.floor(m / 60)) + ':' + pad(Math.floor(m % 60));
     const br = d => d.split('-').reverse().join('/');
     const now = new Date();
     let from = iso(new Date(now.getFullYear(), now.getMonth(), 1));
@@ -107,6 +109,36 @@
     function saveDB() {
       localStorage.setItem('ponto_recs', JSON.stringify(recs));
       localStorage.setItem('ponto_cfg', JSON.stringify(cfg));
+    }
+
+    function fazerLogin(e) {
+      e.preventDefault();
+      const nomeIn = \$('#ln').value;
+      const senhaIn = \$('#ls').value;
+      
+      const u = users.find(x => x.nome.trim().toLowerCase() === String(nomeIn).trim().toLowerCase() && x.senha === String(senhaIn).trim());
+      
+      if (!u) {
+        \$('#lm').textContent = 'Utilizador ou senha incorretos.';
+        return false;
+      }
+      
+      S = { nome: u.nome, senha: u.senha, role: u.role };
+      \$('#login').style.display = 'none';
+      \$('#app').style.display = '';
+      \$('#who').textContent = u.nome;
+      \$('#role').textContent = u.role === 'supervisor' ? 'Painel do Supervisor' : 'Meu Ponto';
+      load();
+      return false;
+    }
+
+    function sair() {
+      S = { nome: '', senha: '', role: '' };
+      \$('#app').style.display = 'none';
+      \$('#login').style.display = '';
+      \$('#ln').value = '';
+      \$('#ls').value = '';
+      \$('#lm').textContent = '';
     }
 
     function dayMap(list) {
@@ -138,13 +170,6 @@
       return a;
     }
 
-    const periodBar = () => `<label>De<input type="date" id="pf" value="${from}"></label><label>Até<input type="date" id="pt" value="${to}"></label>`;
-    
-    function bindPeriod() {
-      \$('#pf').onchange = e => { from = e.target.value || from; load(); };
-      \$('#pt').onchange = e => { to = e.target.value || to; load(); };
-    }
-
     function load() {
       S.role === 'supervisor' ? viewSup() : viewMine();
     }
@@ -167,38 +192,33 @@
 
       \$('#body').innerHTML = `
         <div class="card">
-          <div class="row">
-            <button id="bi">Registrar entrada</button>
-            <button class="s" id="bo">Registrar saída</button>
+          <div class="row" style="gap:10px">
+            <button type="button" class="s" onclick="registraPonto('Entrada')">Registrar entrada</button>
+            <button type="button" class="s" onclick="registraPonto('Saída')">Registrar saída</button>
           </div>
-          <p class="msg" id="pm">${esc(msg)}</p>
-          <p class="note">O horário registrado é o do dispositivo e atualizado na hora.</p>
+          <p class="msg">${esc(msg)}</p>
         </div>
-        <div class="card"><div class="row">${periodBar()}</div></div>
         <div class="kpis">
-          <div class="kpi"><b>${hm(tA)}</b><span>Atraso total no período</span></div>
-          <div class="kpi"><b>${nA}</b><span>Dias com atraso</span></div>
+          <div class="kpi"><b>${hm(tA)}</b><span>Atraso total</span></div>
+          <div class="kpi"><b>${nA}</b><span>Dias c/ atraso</span></div>
           <div class="kpi"><b>${hm(tT)}</b><span>Horas trabalhadas</span></div>
         </div>
         <div class="card wrap">
           <table>
             <tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Atraso</th><th>Horas</th></tr>
-            ${rows || '<tr><td colspan=5>Sem dias úteis no período.</td></tr>'}
+            ${rows || '<tr><td colspan=5>Sem registos no período.</td></tr>'}
           </table>
         </div>`;
-      
-      bindPeriod();
-      const punch = tipo => {
-        const nowD = new Date();
-        const dateStr = iso(nowD);
-        const timeStr = pad(nowD.getHours()) + ':' + pad(nowD.getMinutes());
-        recs.push({ data: dateStr, hora: timeStr, nome: S.nome, tipo: tipo });
-        saveDB();
-        msg = `${tipo} registrada às ${timeStr}.`;
-        load();
-      };
-      \$('#bi').onclick = () => punch('Entrada');
-      \$('#bo').onclick = () => punch('Saída');
+    }
+
+    function registraPonto(tipo) {
+      const nowD = new Date();
+      const dateStr = iso(nowD);
+      const timeStr = pad(nowD.getHours()) + ':' + pad(nowD.getMinutes());
+      recs.push({ data: dateStr, hora: timeStr, nome: S.nome, tipo: tipo });
+      saveDB();
+      msg = `${tipo} registrada às ${timeStr}.`;
+      load();
     }
 
     function viewSup() {
@@ -239,17 +259,6 @@
       }).join('');
 
       \$('#body').innerHTML = `
-        <div class="card">
-          <b>Regras</b>
-          <div class="row" style="margin-top:8px">
-            <label>Horário de entrada<input type="time" id="c1" value="${esc(cfg.entrada)}"></label>
-            <label>Tolerância (min)<input type="number" id="c2" min="0" value="${cfg.tol}" style="width:90px"></label>
-            <label>Limite de atraso no período (min)<input type="number" id="c4" min="0" value="${cfg.limite}" style="width:110px"></label>
-            <button id="cs">Salvar regras</button>
-          </div>
-          <p class="note">Se a chegada passar da tolerância, conta o atraso inteiro; dentro dela, não conta.</p>
-        </div>
-        <div class="card"><div class="row">${periodBar()}<button class="s" id="ex">Exportar CSV</button><button class="s" id="rf">Atualizar</button></div></div>
         <div class="kpis">
           <div class="kpi"><b>${L.length}</b><span>Estagiários</span></div>
           <div class="kpi"><b>${L.filter(s => s.tA > 0).length}</b><span>Com atraso</span></div>
@@ -258,54 +267,10 @@
         <div class="card wrap">
           <table>
             <tr><th>Estagiário</th><th>Dias</th><th>Dias c/ atraso</th><th>Atraso total</th><th>Horas</th><th>Sem saída</th><th>Status</th></tr>
-            ${body || '<tr><td colspan=7>Nenhum estagiário cadastrado.</td></tr>'}
+            ${body}
           </table>
         </div>`;
-
-      bindPeriod();
-      \$('#rf').onclick = load;
-      \$('#cs').onclick = () => {
-        cfg.entrada = \$('#c1').value || '08:00';
-        cfg.tol = Number(\$('#c2').value || 0);
-        cfg.limite = Number(\$('#c4').value || 0);
-        saveDB();
-        load();
-        alert('Regras salvas com sucesso!');
-      };
-      \$('#ex').onclick = () => {
-        const csv = '\ufeff' + ['Estagiario;Dias;Dias com atraso;Atraso (min);Horas trabalhadas (min);Sem saida', ...L.map(s => [s.nome, s.dias, s.nA, s.tA, s.tT, s.sem].join(';'))].join('\n');
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-        a.download = 'monitoria_' + from + '_' + to + '.csv';
-        a.click();
-      };
     }
-
-    function entrar(nome, senha) {
-      $('#lb').disabled = true; $('#lm').textContent = '';
-      const u = users.find(x => x.nome.trim().toLowerCase() === String(nome || '').trim().toLowerCase() && x.senha === String(senha || '').trim());
-      \$('#lb').disabled = false;
-      if (!u) {
-        \$('#lm').textContent = 'Utilizador ou senha incorretos.';
-        try { sessionStorage.removeItem('s'); } catch (e) {}
-        return;
-      }
-      S = { nome: u.nome, senha: u.senha, role: u.role };
-      try { sessionStorage.setItem('s', JSON.stringify({ nome: u.nome, senha: u.senha })); } catch (e) {}
-      $('#login').style.display = 'none'; $('#app').style.display = '';
-      \$('#who').textContent = u.nome;
-      \$('#role').textContent = u.role === 'supervisor' ? 'Tela de monitoria' : 'Meu ponto';
-      msg = '';
-      load();
-    }
-
-    \$('#lb').onclick = () => entrar($('#ln').value, $('#ls').value);
-    $('#ls').onkeydown = e => { if (e.key === 'Enter') $('#lb').click(); };
-    \$('#out').onclick = () => { try { sessionStorage.removeItem('s'); } catch (e) {} location.reload(); };
-    try {
-      const s = JSON.parse(sessionStorage.getItem('s') || 'null');
-      if (s) entrar(s.nome, s.senha);
-    } catch (e) {}
   </script>
 </main>
 </body>
