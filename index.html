@@ -107,26 +107,64 @@
       localStorage.setItem('ponto_cfg', JSON.stringify(cfg));
     }
 
-    function fazerLogin() {
-      const nomeIn = $('#ln').value;
-      const senhaIn = $('#ls').value;
+    
+async function fazerLogin() {
+  const nomeIn = $('#ln').value.trim();
+  const senhaIn = $('#ls').value.trim();
+  const mensagem = $('#lm');
 
-      const u = users.find(x => x.nome.trim().toLowerCase() === String(nomeIn).trim().toLowerCase() && x.senha === String(senhaIn).trim());
+  mensagem.textContent = 'Verificando login...';
 
-      if (!u) {
-        $('#lm').textContent = 'Utilizador ou senha incorretos.';
-        return;
+  try {
+    const resposta = await fetch(
+      'https://nrcpqtrmfxxnemgnfzqz.supabase.co/functions/v1/login-estagiarios',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'sb_publishable_6uKw8SGTytkd4w9Q6Cnvcg_KF8tAymw',
+          'Authorization': 'Bearer sb_publishable_6uKw8SGTytkd4w9Q6Cnvcg_KF8tAymw'
+        },
+        body: JSON.stringify({
+          nome: nomeIn,
+          senha: senhaIn
+        })
       }
+    );
 
-      S = { nome: u.nome, senha: u.senha, role: u.role };
-      localStorage.setItem('ponto_sessao', JSON.stringify(S));
+    const dados = await resposta.json();
 
-      $('#login').style.display = 'none';
-      $('#app').style.display = '';
-      $('#who').textContent = u.nome;
-      $('#role').textContent = u.role === 'supervisor' ? 'Painel do Supervisor' : 'Meu Ponto';
-      load();
+    if (!resposta.ok || !dados.sucesso || !dados.funcionario) {
+      mensagem.textContent = dados.erro || 'Nome ou senha incorretos.';
+      return;
     }
+
+    const funcionario = dados.funcionario;
+
+    S = {
+      nome: funcionario.nome,
+      role: funcionario.perfil
+    };
+
+    localStorage.setItem('ponto_sessao', JSON.stringify(S));
+
+    $('#login').style.display = 'none';
+    $('#app').style.display = '';
+    $('#who').textContent = funcionario.nome;
+    $('#role').textContent =
+      funcionario.perfil === 'supervisor'
+        ? 'Painel do Supervisor'
+        : 'Meu Ponto';
+
+    mensagem.textContent = '';
+    load();
+
+  } catch (erro) {
+    mensagem.textContent =
+      'Não foi possível conectar ao servidor. Tente novamente.';
+    console.error(erro);
+  }
+}
 
     function sair() {
       localStorage.removeItem('ponto_sessao');
