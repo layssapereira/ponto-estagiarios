@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -222,15 +221,11 @@
 
     <div style="display:flex;flex-direction:column;gap:10px">
       <label>Nome completo
-        <input id="ln" type="text"
-          placeholder="Digite seu nome"
-          autocomplete="username">
+        <input id="ln" type="text" placeholder="Digite seu nome" autocomplete="username">
       </label>
 
       <label>Senha
-        <input id="ls" type="password"
-          placeholder="Digite sua senha"
-          autocomplete="current-password">
+        <input id="ls" type="password" placeholder="Digite sua senha" autocomplete="current-password">
       </label>
 
       <button type="button" id="lb">Entrar</button>
@@ -261,11 +256,8 @@
 "use strict";
 
 /* CONFIGURAÇÃO DO SUPABASE */
-const SUPABASE_URL =
-  "https://nrcpqtrmfxxnemgnfzqz.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_6uKw8SGTytkd4w9Q6Cnvcg_KF8tAymw";
+const SUPABASE_URL = "https://nrcpqtrmfxxnemgnfzqz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_6uKw8SGTytkd4w9Q6Cnvcg_KF8tAymw";
 
 /* LISTA DE ESTAGIÁRIOS */
 const users = [
@@ -294,28 +286,15 @@ let cfg = JSON.parse(
   })
 );
 
-let recs = JSON.parse(
-  localStorage.getItem("ponto_recs") || "[]"
-);
-
+let recs = [];
 let S = { nome: "", role: "" };
 let msg = "";
 
-const $ = s => document.querySelector(s);
-
+const \$ = s => document.querySelector(s);
 const pad = n => String(n).padStart(2, "0");
-
-const iso = d =>
-  d.getFullYear() + "-" +
-  pad(d.getMonth() + 1) + "-" +
-  pad(d.getDate());
-
+const iso = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;"
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[c]));
 
 const mins = t => {
@@ -324,70 +303,67 @@ const mins = t => {
   return h * 60 + m;
 };
 
-const hm = m =>
-  m == null
-    ? "—"
-    : Math.floor(m / 60) + "h" + pad(m % 60);
-
-const tm = m =>
-  m == null
-    ? "—"
-    : pad(Math.floor(m / 60)) + ":" + pad(m % 60);
-
+const hm = m => m == null ? "—" : Math.floor(m / 60) + "h" + pad(m % 60);
+const tm = m => m == null ? "—" : pad(Math.floor(m / 60)) + ":" + pad(m % 60);
 const br = d => d.split("-").reverse().join("/");
 
 function saveDB() {
-  localStorage.setItem("ponto_recs", JSON.stringify(recs));
   localStorage.setItem("ponto_cfg", JSON.stringify(cfg));
+}
+
+/* CARREGAR REGISTROS DO SUPABASE */
+async function carregarRegistrosSupabase() {
+  try {
+    const resposta = await fetch(
+      SUPABASE_URL + "/functions/v1/pontos-estagiarios?action=listar",
+      {
+        method: "GET",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY
+        }
+      }
+    );
+    if (resposta.ok) {
+      const dados = await resposta.json();
+      if (dados.recs) recs = dados.recs;
+    }
+  } catch (e) {
+    console.error("Erro ao buscar registros do servidor:", e);
+  }
 }
 
 /* PERÍODO DO DIA 20 AO DIA 19 */
 function periodoAtual() {
   const hoje = new Date();
   hoje.setHours(12, 0, 0, 0);
-
   let inicio, fim;
 
   if (hoje.getDate() >= 20) {
-    inicio = new Date(
-      hoje.getFullYear(), hoje.getMonth(), 20, 12
-    );
-
-    fim = new Date(
-      hoje.getFullYear(), hoje.getMonth() + 1, 19, 12
-    );
+    inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 20, 12);
+    fim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 19, 12);
   } else {
-    inicio = new Date(
-      hoje.getFullYear(), hoje.getMonth() - 1, 20, 12
-    );
-
-    fim = new Date(
-      hoje.getFullYear(), hoje.getMonth(), 19, 12
-    );
+    inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 20, 12);
+    fim = new Date(hoje.getFullYear(), hoje.getMonth(), 19, 12);
   }
-
   return { inicio, fim };
 }
 
 function textoPeriodo() {
   const p = periodoAtual();
-
-  return "Período: " +
-    br(iso(p.inicio)) + " até " + br(iso(p.fim));
+  return "Período: " + br(iso(p.inicio)) + " até " + br(iso(p.fim));
 }
 
 function dentroPeriodo(data) {
   const p = periodoAtual();
-
-  return data >= iso(p.inicio) &&
-    data <= iso(p.fim);
+  return data >= iso(p.inicio) && data <= iso(p.fim);
 }
 
 /* LOGIN PELO SUPABASE */
 async function fazerLogin() {
-  const nomeIn = $("#ln").value.trim();
-  const senhaIn = $("#ls").value.trim();
-  const mensagem = $("#lm");
+  const nomeIn = \$("#ln").value.trim();
+  const senhaIn = \$("#ls").value.trim();
+  const mensagem = \$("#lm");
 
   if (!nomeIn || !senhaIn) {
     mensagem.textContent = "Informe seu nome e sua senha.";
@@ -395,7 +371,7 @@ async function fazerLogin() {
   }
 
   mensagem.textContent = "Verificando login...";
-  $("#lb").disabled = true;
+  \$("#lb").disabled = true;
 
   try {
     const resposta = await fetch(
@@ -407,22 +383,14 @@ async function fazerLogin() {
           "apikey": SUPABASE_KEY,
           "Authorization": "Bearer " + SUPABASE_KEY
         },
-        body: JSON.stringify({
-          nome: nomeIn,
-          senha: senhaIn
-        })
+        body: JSON.stringify({ nome: nomeIn, senha: senhaIn })
       }
     );
 
     const dados = await resposta.json();
 
-    if (
-      !resposta.ok ||
-      !dados.sucesso ||
-      !dados.funcionario
-    ) {
-      mensagem.textContent =
-        dados.erro || "Nome ou senha incorretos.";
+    if (!resposta.ok || !dados.sucesso || !dados.funcionario) {
+      mensagem.textContent = dados.erro || "Nome ou senha incorretos.";
       return;
     }
 
@@ -437,86 +405,58 @@ async function fazerLogin() {
       return;
     }
 
-    $("#login").style.display = "none";
-    $("#app").style.display = "";
-    $("#who").textContent = S.nome;
-
-    $("#role").textContent =
-      S.role === "supervisor"
-        ? "Painel da Supervisora"
-        : "Meu Ponto";
+    \$("#login").style.display = "none";
+    \$("#app").style.display = "";
+    \$("#who").textContent = S.nome;
+    \$("#role").textContent = S.role === "supervisor" ? "Painel da Supervisora" : "Meu Ponto";
 
     msg = "";
     mensagem.textContent = "";
+    
+    await carregarRegistrosSupabase();
     load();
 
   } catch (erro) {
-    mensagem.textContent =
-      "Não foi possível conectar. Verifique a internet e tente novamente.";
+    mensagem.textContent = "Não foi possível conectar. Verifique a internet e tente novamente.";
     console.error(erro);
-
   } finally {
-    $("#lb").disabled = false;
+    \$("#lb").disabled = false;
   }
 }
 
 function sair() {
   S = { nome: "", role: "" };
-
-  $("#ls").value = "";
-  $("#app").style.display = "none";
-  $("#login").style.display = "";
-  $("#lm").textContent = "";
+  \$("#ls").value = "";
+  \$("#app").style.display = "none";
+  \$("#login").style.display = "";
+  \$("#lm").textContent = "";
 }
 
-$("#lb").onclick = fazerLogin;
-
-$("#ls").onkeydown = e => {
-  if (e.key === "Enter") fazerLogin();
-};
+\$("#lb").onclick = fazerLogin;
+\$("#ls").onkeydown = e => { if (e.key === "Enter") fazerLogin(); };
 
 /* ORGANIZA OS REGISTROS POR ESTAGIÁRIO E DIA */
 function dayMap(list) {
   const m = {};
-
   list.forEach(r => {
     const k = r.nome + "|" + r.data;
-
-    const d = m[k] = m[k] || {
-      nome: r.nome,
-      data: r.data,
-      ent: null,
-      sai: null
-    };
-
+    const d = m[k] = m[k] || { nome: r.nome, data: r.data, ent: null, sai: null };
     const t = mins(r.hora);
-
     if (t == null) return;
 
     if (r.tipo === "Entrada") {
       if (d.ent == null || t < d.ent) d.ent = t;
     }
-
     if (r.tipo === "Saída") {
       if (d.sai == null || t > d.sai) d.sai = t;
     }
   });
 
   Object.values(m).forEach(d => {
-    const atraso = d.ent == null
-      ? 0
-      : d.ent - mins(cfg.entrada);
-
+    const atraso = d.ent == null ? 0 : d.ent - mins(cfg.entrada);
     d.atraso = atraso > cfg.tol ? atraso : 0;
-
-    d.trab =
-      d.ent != null &&
-      d.sai != null &&
-      d.sai >= d.ent
-        ? d.sai - d.ent
-        : null;
+    d.trab = d.ent != null && d.sai != null && d.sai >= d.ent ? d.sai - d.ent : null;
   });
-
   return m;
 }
 
@@ -530,10 +470,8 @@ function weekdays() {
     if (d.getDay() !== 0 && d.getDay() !== 6) {
       dias.push(iso(d));
     }
-
     d.setDate(d.getDate() + 1);
   }
-
   return dias;
 }
 
@@ -547,27 +485,18 @@ function load() {
 
 /* TELA DO ESTAGIÁRIO */
 function viewMine() {
-  const registros = recs.filter(r =>
-    r.nome === S.nome && dentroPeriodo(r.data)
-  );
-
+  const registros = recs.filter(r => r.nome === S.nome && dentroPeriodo(r.data));
   const dm = dayMap(registros);
   const ds = weekdays();
 
-  let tA = 0;
-  let nA = 0;
-  let tT = 0;
+  let tA = 0, nA = 0, tT = 0;
 
   const rows = ds.map(dia => {
     const x = dm[S.nome + "|" + dia] || {};
     const ent = x.ent ?? null;
     const sai = x.sai ?? null;
 
-    if (x.atraso) {
-      tA += x.atraso;
-      nA++;
-    }
-
+    if (x.atraso) { tA += x.atraso; nA++; }
     tT += x.trab || 0;
 
     return `
@@ -576,71 +505,33 @@ function viewMine() {
         <td>${tm(ent)}</td>
         <td>${tm(sai)}</td>
         <td class="${x.atraso ? "late" : ""}">
-          ${
-            ent == null
-              ? "—"
-              : x.atraso
-                ? x.atraso + " min"
-                : "No horário"
-          }
+          ${ent == null ? "—" : x.atraso ? x.atraso + " min" : "No horário"}
         </td>
         <td>${hm(x.trab)}</td>
       </tr>
     `;
   }).join("");
 
-  $("#body").innerHTML = `
+  \$("#body").innerHTML = `
     <p class="periodo">${textoPeriodo()}</p>
-
     <div class="card">
       <h2>Registrar ponto</h2>
-
       <p>Use os botões para registrar seu horário atual.</p>
-
       <div class="actions">
-        <button type="button"
-          onclick="registraPonto('Entrada')">
-          Registrar entrada
-        </button>
-
-        <button type="button"
-          onclick="registraPonto('Saída')">
-          Registrar saída
-        </button>
+        <button type="button" onclick="registraPonto('Entrada')">Registrar entrada</button>
+        <button type="button" onclick="registraPonto('Saída')">Registrar saída</button>
       </div>
-
       <p class="msg">${esc(msg)}</p>
     </div>
-
     <div class="kpis">
-      <div class="kpi">
-        <b>${hm(tA)}</b>
-        <span>Atraso total</span>
-      </div>
-
-      <div class="kpi">
-        <b>${nA}</b>
-        <span>Dias com atraso</span>
-      </div>
-
-      <div class="kpi">
-        <b>${hm(tT)}</b>
-        <span>Horas trabalhadas</span>
-      </div>
+      <div class="kpi"><b>${hm(tA)}</b><span>Atraso total</span></div>
+      <div class="kpi"><b>${nA}</b><span>Dias com atraso</span></div>
+      <div class="kpi"><b>${hm(tT)}</b><span>Horas trabalhadas</span></div>
     </div>
-
     <div class="card wrap">
       <h2>Meu histórico</h2>
-
       <table>
-        <tr>
-          <th>Data</th>
-          <th>Entrada</th>
-          <th>Saída</th>
-          <th>Atraso</th>
-          <th>Horas</th>
-        </tr>
-
+        <tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Atraso</th><th>Horas</th></tr>
         ${rows}
       </table>
     </div>
@@ -653,8 +544,7 @@ async function registraPonto(tipo) {
 
   const agora = new Date();
   const data = iso(agora);
-  const hora =
-    pad(agora.getHours()) + ":" + pad(agora.getMinutes());
+  const hora = pad(agora.getHours()) + ":" + pad(agora.getMinutes());
 
   if (!dentroPeriodo(data)) {
     msg = "A data atual está fora do período de apuração.";
@@ -678,16 +568,15 @@ async function registraPonto(tipo) {
         body: JSON.stringify({
           action: "registrar",
           nome: S.nome,
-          senha: $("#ls").value,
-          tipo: tipo,
-          data: data,
-          hora: hora
+          senha: \$("#ls").value,
+          tipo,
+          data,
+          hora
         })
       }
     );
 
     const resultado = await resposta.json();
-
     if (!resposta.ok || !resultado.sucesso) {
       msg = resultado.erro || "Não foi possível salvar o ponto.";
       load();
@@ -695,6 +584,7 @@ async function registraPonto(tipo) {
     }
 
     msg = tipo + " salva no banco de dados às " + hora + ".";
+    await carregarRegistrosSupabase();
     load();
 
   } catch (erro) {
@@ -704,94 +594,57 @@ async function registraPonto(tipo) {
   }
 }
 
-
-
-/* SITUAÇÃO DO PONTO PARA OS AVISOS E O RELATÓRIO */
+/* SITUAÇÃO DO PONTO PARA AVISOS */
 function statusPontoDia(d, data, hoje) {
   const ent = d ? d.ent : null;
   const sai = d ? d.sai : null;
   const atraso = d ? (d.atraso || 0) : 0;
 
   if (ent == null && sai == null) {
-    return data === hoje
-      ? "Pendente hoje — nenhum ponto registrado"
-      : "Falta do dia — sem registro";
+    return data === hoje ? "Pendente hoje — nenhum ponto registrado" : "Falta do dia — sem registro";
   }
-
-  if (ent == null) {
-    return "Falta de entrada";
-  }
-
-  if (sai == null) {
-    return data === hoje
-      ? "Saída pendente hoje"
-      : "Falta de saída";
-  }
-
-  if (atraso > 0) {
-    return "Atraso de " + atraso + " minutos";
-  }
-
+  if (ent == null) return "Falta de entrada";
+  if (sai == null) return data === hoje ? "Saída pendente hoje" : "Falta de saída";
+  if (atraso > 0) return "Atraso de " + atraso + " minutos";
   return "Completo";
 }
 
-/* CARREGAR OS HORÁRIOS PARA EDITAR */
+/* CARREGAR OS HORÁRIOS PARA EDITAR (SUPERVISORA) */
 function carregarEdicao() {
   if (S.role !== "supervisor") return;
 
-  const nomeEl = $("#editNome");
-  const dataEl = $("#editData");
-
+  const nomeEl = \$("#editNome");
+  const dataEl = \$("#editData");
   if (!nomeEl || !dataEl) return;
 
   const nome = nomeEl.value;
   const data = dataEl.value;
-
   if (!nome || !data) return;
 
-  const doDia = recs.filter(r =>
-    r.nome === nome && r.data === data
-  );
+  const doDia = recs.filter(r => r.nome === nome && r.data === data);
+  const entradas = doDia.filter(r => r.tipo === "Entrada").map(r => mins(r.hora)).filter(v => v != null);
+  const saidas = doDia.filter(r => r.tipo === "Saída").map(r => mins(r.hora)).filter(v => v != null);
 
-  const entradas = doDia
-    .filter(r => r.tipo === "Entrada")
-    .map(r => mins(r.hora))
-    .filter(v => v != null);
+  const entrada = entradas.length ? Math.min(...entradas) : null;
+  const saida = saidas.length ? Math.max(...saidas) : null;
 
-  const saidas = doDia
-    .filter(r => r.tipo === "Saída")
-    .map(r => mins(r.hora))
-    .filter(v => v != null);
+  \$("#editEntrada").value = entrada == null ? "" : tm(entrada);
+  \$("#editSaida").value = saida == null ? "" : tm(saida);
 
-  const entrada = entradas.length
-    ? Math.min(...entradas)
-    : null;
-
-  const saida = saidas.length
-    ? Math.max(...saidas)
-    : null;
-
-  $("#editEntrada").value =
-    entrada == null ? "" : tm(entrada);
-
-  $("#editSaida").value =
-    saida == null ? "" : tm(saida);
-
-  $("#editMsg").textContent = doDia.length
+  \$("#editMsg").textContent = doDia.length
     ? "Horários carregados. Altere o necessário e salve."
     : "Não há ponto nesta data. Você pode inserir os horários.";
 }
 
-/* SALVAR EDIÇÃO DO PONTO */
-function editarPonto() {
+/* SALVAR EDIÇÃO DO PONTO (SUPABASE OU LOCAL) */
+async function editarPonto() {
   if (S.role !== "supervisor") return;
 
-  const nome = $("#editNome").value;
-  const data = $("#editData").value;
-  const entrada = $("#editEntrada").value;
-  const saida = $("#editSaida").value;
-
-  const mensagem = $("#editMsg");
+  const nome = \$("#editNome").value;
+  const data = \$("#editData").value;
+  const entrada = \$("#editEntrada").value;
+  const saida = \$("#editSaida").value;
+  const mensagem = \$("#editMsg");
 
   if (!nome || !data) {
     mensagem.textContent = "Selecione o estagiário e a data.";
@@ -799,73 +652,64 @@ function editarPonto() {
   }
 
   if (!dentroPeriodo(data)) {
-    mensagem.textContent =
-      "A data precisa estar no período atual.";
+    mensagem.textContent = "A data precisa estar no período atual.";
     return;
   }
 
   if (!entrada && !saida) {
-    const confirmar = confirm(
-      "Os dois horários estão vazios. Isso removerá os registros " +
-      "de entrada e saída deste dia. Deseja continuar?"
-    );
-
-    if (!confirmar) return;
+    if (!confirm("Os dois horários estão vazios. Deseja remover os registros deste dia?")) return;
   }
 
   if (entrada && saida && mins(saida) < mins(entrada)) {
-    mensagem.textContent =
-      "A saída não pode ser anterior à entrada.";
+    mensagem.textContent = "A saída não pode ser anterior à entrada.";
     return;
   }
 
-  recs = recs.filter(r =>
-    !(
-      r.nome === nome &&
-      r.data === data &&
-      (r.tipo === "Entrada" || r.tipo === "Saída")
-    )
-  );
+  mensagem.textContent = "Salvando alterações...";
 
-  if (entrada) {
-    recs.push({
-      nome,
-      data,
-      hora: entrada,
-      tipo: "Entrada"
-    });
-  }
+  try {
+    const resposta = await fetch(
+      SUPABASE_URL + "/functions/v1/pontos-estagiarios",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          action: "editar_supervisor",
+          supervisor: S.nome,
+          senha_supervisor: \$("#ls").value,
+          nome_estagiario: nome,
+          data,
+          entrada,
+          saida
+        })
+      }
+    );
 
-  if (saida) {
-    recs.push({
-      nome,
-      data,
-      hora: saida,
-      tipo: "Saída"
-    });
-  }
+    const resultado = await resposta.json();
+    if (!resposta.ok) {
+      mensagem.textContent = resultado.erro || "Erro ao salvar alteração.";
+      return;
+    }
 
-  saveDB();
+    await carregarRegistrosSupabase();
+    viewSup();
 
-  msg = "Ponto atualizado para " + nome +
-    " em " + br(data) + ".";
+    \$("#editNome").value = nome;
+    \$("#editData").value = data;
+    carregarEdicao();
+    \$("#editMsg").textContent = "Alterações salvas com sucesso.";
 
-  viewSup();
-
-  const editNome = $("#editNome");
-  const editData = $("#editData");
-
-  if (editNome) editNome.value = nome;
-  if (editData) editData.value = data;
-
-  carregarEdicao();
-
-  if ($("#editMsg")) {
-    $("#editMsg").textContent = "Alterações salvas com sucesso.";
+  } catch (e) {
+    console.error(e);
+    mensagem.textContent = "Erro de conexão ao salvar.";
   }
 }
 
-/* EXPORTAR DETALHAMENTO E RESUMO EM CSV PARA O EXCEL */
+/* EXPORTAR RELATÓRIO EM CSV PARA O EXCEL */
 function exportarRelatorioAtrasos() {
   if (S.role !== "supervisor") return;
 
@@ -875,47 +719,27 @@ function exportarRelatorioAtrasos() {
   const hoje = iso(new Date());
   const limite = hoje < fim ? hoje : fim;
 
-  const dias = weekdays().filter(d =>
-    d >= inicio && d <= limite
-  );
-
-  const dm = dayMap(
-    recs.filter(r => r.data >= inicio && r.data <= fim)
-  );
+  const dias = weekdays().filter(d => d >= inicio && d <= limite);
+  const dm = dayMap(recs.filter(r => r.data >= inicio && r.data <= fim));
 
   const detalhes = [];
   const resumo = [];
 
   users.forEach(u => {
-    let diasSemPonto = 0;
-    let faltasEntrada = 0;
-    let faltasSaida = 0;
-    let diasAtraso = 0;
-    let totalAtraso = 0;
-    let pendenciasHoje = 0;
+    let diasSemPonto = 0, faltasEntrada = 0, faltasSaida = 0;
+    let diasAtraso = 0, totalAtraso = 0, pendenciasHoje = 0;
 
     dias.forEach(data => {
-      const d = dm[u.nome + "|" + data] || {
-        nome: u.nome,
-        data,
-        ent: null,
-        sai: null,
-        atraso: 0
-      };
-
+      const d = dm[u.nome + "|" + data] || { nome: u.nome, data, ent: null, sai: null, atraso: 0 };
       const status = statusPontoDia(d, data, hoje);
       const atraso = d.atraso || 0;
 
       if (data === hoje && (d.ent == null || d.sai == null)) {
         pendenciasHoje++;
       } else if (data < hoje) {
-        if (d.ent == null && d.sai == null) {
-          diasSemPonto++;
-        } else if (d.ent == null) {
-          faltasEntrada++;
-        } else if (d.sai == null) {
-          faltasSaida++;
-        }
+        if (d.ent == null && d.sai == null) diasSemPonto++;
+        else if (d.ent == null) faltasEntrada++;
+        else if (d.sai == null) faltasSaida++;
       }
 
       if (atraso > 0) {
@@ -924,86 +748,36 @@ function exportarRelatorioAtrasos() {
       }
 
       if (status !== "Completo") {
-        detalhes.push([
-          u.nome,
-          br(data),
-          tm(d.ent),
-          tm(d.sai),
-          status,
-          atraso
-        ]);
+        detalhes.push([u.nome, br(data), tm(d.ent), tm(d.sai), status, atraso]);
       }
     });
 
-    resumo.push([
-      u.nome,
-      diasSemPonto,
-      faltasEntrada,
-      faltasSaida,
-      pendenciasHoje,
-      diasAtraso,
-      totalAtraso,
-      hm(totalAtraso)
-    ]);
+    resumo.push([u.nome, diasSemPonto, faltasEntrada, faltasSaida, pendenciasHoje, diasAtraso, totalAtraso, hm(totalAtraso)]);
   });
 
   const linhas = [
     ["RELATÓRIO DE PONTO — FALTAS DE REGISTRO E ATRASOS"],
     ["Período", br(inicio) + " até " + br(fim)],
-    ["Critério", "Segunda a sexta-feira; feriados não são excluídos automaticamente."],
     [],
     ["DETALHAMENTO POR DIA"],
-    [
-      "Estagiário",
-      "Data",
-      "Entrada",
-      "Saída",
-      "Ocorrência",
-      "Atraso (minutos)"
-    ],
+    ["Estagiário", "Data", "Entrada", "Saída", "Ocorrência", "Atraso (minutos)"],
     ...detalhes,
     [],
     ["RESUMO POR ESTAGIÁRIO"],
-    [
-      "Estagiário",
-      "Dias anteriores sem nenhum ponto",
-      "Faltas de entrada",
-      "Faltas de saída",
-      "Pendências de hoje",
-      "Dias com atraso",
-      "Atraso total (minutos)",
-      "Atraso total"
-    ],
-    ...resumo,
-    [],
-    [
-      "TOTAL DE MINUTOS DE ATRASO",
-      resumo.reduce((total, r) => total + r[6], 0)
-    ]
+    ["Estagiário", "Dias sem ponto", "Faltas de entrada", "Faltas de saída", "Pendências hoje", "Dias com atraso", "Atraso total (min)", "Atraso total"],
+    ...resumo
   ];
 
-  const csv = "\uFEFF" + linhas.map(linha =>
-    linha.map(valor =>
-      '"' + String(valor ?? "").replace(/"/g, '""') + '"'
-    ).join(";")
-  ).join("\r\n");
-
-  const arquivo = new Blob([csv], {
-    type: "text/csv;charset=utf-8;"
-  });
-
-  const url = URL.createObjectURL(arquivo);
+  const csv = "\uFEFF" + linhas.map(l => l.map(v => '"' + String(v ?? "").replace(/"/g, '""') + '"').join(";")).join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
 
   link.href = url;
-  link.download =
-    `relatorio_ponto_${inicio}_a_${fim}.csv`;
-
+  link.download = `relatorio_ponto_${inicio}_a_${fim}.csv`;
   document.body.appendChild(link);
   link.click();
   link.remove();
-
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /* PAINEL DA SUPERVISORA */
@@ -1016,82 +790,40 @@ function viewSup() {
   const hoje = iso(new Date());
   const limite = hoje < fim ? hoje : fim;
 
-  const registros = recs.filter(r =>
-    r.data >= inicio && r.data <= fim
-  );
-
+  const registros = recs.filter(r => r.data >= inicio && r.data <= fim);
   const dm = dayMap(registros);
-  const dias = weekdays().filter(d =>
-    d >= inicio && d <= limite
-  );
+  const dias = weekdays().filter(d => d >= inicio && d <= limite);
 
   const g = {};
-
   users.forEach(u => {
-    g[u.nome] = {
-      nome: u.nome,
-      dias: 0,
-      nA: 0,
-      tA: 0,
-      tT: 0,
-      sem: 0,
-      lista: []
-    };
+    g[u.nome] = { nome: u.nome, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, lista: [] };
   });
 
   Object.values(dm).forEach(d => {
-    const s = g[d.nome] = g[d.nome] || {
-      nome: d.nome,
-      dias: 0,
-      nA: 0,
-      tA: 0,
-      tT: 0,
-      sem: 0,
-      lista: []
-    };
-
+    const s = g[d.nome] = g[d.nome] || { nome: d.nome, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, lista: [] };
     if (d.ent == null) return;
-
     s.dias++;
     s.tT += d.trab || 0;
-
     if (d.trab == null) s.sem++;
 
     if (d.atraso > 0) {
       s.nA++;
       s.tA += d.atraso;
-      s.lista.push(
-        br(d.data) + " – entrada " + tm(d.ent) +
-        " (" + d.atraso + " min)"
-      );
+      s.lista.push(br(d.data) + " – entrada " + tm(d.ent) + " (" + d.atraso + " min)");
     }
   });
 
   const L = Object.values(g).sort((a, b) => b.tA - a.tA);
-
-  const totalAtrasos = L.reduce(
-    (total, s) => total + s.tA, 0
-  );
+  const totalAtrasos = L.reduce((t, s) => t + s.tA, 0);
 
   const linhas = L.map(s => {
-    const status = s.tA > cfg.limite
-      ? ["Crítico", "bad"]
-      : s.tA > 0
-        ? ["Atenção", "warn"]
-        : ["Em dia", "ok"];
-
+    const status = s.tA > cfg.limite ? ["Crítico", "bad"] : s.tA > 0 ? ["Atenção", "warn"] : ["Em dia", "ok"];
     return `
       <tr>
         <td>
           <details>
             <summary>${esc(s.nome)}</summary>
-            <div class="note">
-              ${
-                s.lista.length
-                  ? s.lista.map(esc).join("<br>")
-                  : "Nenhum atraso neste período."
-              }
-            </div>
+            <div class="note">${s.lista.length ? s.lista.map(esc).join("<br>") : "Nenhum atraso."}</div>
           </details>
         </td>
         <td>${s.dias}</td>
@@ -1099,195 +831,96 @@ function viewSup() {
         <td class="${s.tA ? "late" : ""}">${hm(s.tA)}</td>
         <td>${hm(s.tT)}</td>
         <td>${s.sem || "—"}</td>
-        <td>
-          <span class="chip ${status[1]}">${status[0]}</span>
-        </td>
+        <td><span class="chip ${status[1]}">${status[0]}</span></td>
       </tr>
     `;
   }).join("");
 
-  const opcoes = users.map(u =>
-    `<option value="${esc(u.nome)}">${esc(u.nome)}</option>`
-  ).join("");
-
+  const opcoes = users.map(u => `<option value="${esc(u.nome)}">${esc(u.nome)}</option>`).join("");
   const dataHoje = iso(new Date());
-  const dataInicial = dataHoje < inicio
-    ? inicio
-    : dataHoje > fim ? fim : dataHoje;
+  const dataInicial = dataHoje < inicio ? inicio : dataHoje > fim ? fim : dataHoje;
 
-  /* MONTAR AVISOS DE HOJE E DOS DIAS ANTERIORES */
   const avisos = [];
-
   users.forEach(u => {
     dias.forEach(data => {
-      const d = dm[u.nome + "|" + data] || {
-        ent: null,
-        sai: null,
-        atraso: 0
-      };
-
+      const d = dm[u.nome + "|" + data] || { ent: null, sai: null, atraso: 0 };
       const status = statusPontoDia(d, data, hoje);
-
       if (status !== "Completo") {
-        avisos.push({
-          nome: u.nome,
-          data,
-          entrada: d.ent,
-          saida: d.sai,
-          atraso: d.atraso || 0,
-          status
-        });
+        avisos.push({ nome: u.nome, data, entrada: d.ent, saida: d.sai, atraso: d.atraso || 0, status });
       }
     });
   });
 
-  const avisosHtml = avisos.length
-    ? `
-      <div class="wrap">
-        <table>
+  const avisosHtml = avisos.length ? `
+    <div class="wrap">
+      <table>
+        <tr><th>Estagiário</th><th>Data</th><th>Entrada</th><th>Saída</th><th>Ocorrência</th></tr>
+        ${avisos.map(a => `
           <tr>
-            <th>Estagiário</th>
-            <th>Data</th>
-            <th>Entrada</th>
-            <th>Saída</th>
-            <th>Ocorrência</th>
+            <td>\${esc(a.nome)}</td>
+            <td>\${br(a.data)}</td>
+            <td>\${tm(a.entrada)}</td>
+            <td>\${tm(a.saida)}</td>
+            <td class="${a.atraso > 0 \vert{}\vert{} a.status.includes("Falta") ? "late" : "warn"}">${esc(a.status)}</td>
           </tr>
+        `).join("")}
+      </table>
+    </div>
+  ` : `<p class="ok">Nenhuma pendência encontrada nos dias analisados.</p>`;
 
-          ${avisos.map(a => `
-            <tr>
-              <td>${esc(a.nome)}</td>
-              <td>${br(a.data)}</td>
-              <td>${tm(a.entrada)}</td>
-              <td>${tm(a.saida)}</td>
-              <td class="${
-                a.atraso > 0 || a.status.includes("Falta")
-                  ? "late"
-                  : "warn"
-              }">${esc(a.status)}</td>
-            </tr>
-          `).join("")}
-        </table>
-      </div>
-    `
-    : `<p class="ok">Nenhuma pendência encontrada nos dias analisados.</p>`;
-
-  $("#body").innerHTML = `
+  \$("#body").innerHTML = `
     <p class="periodo">${textoPeriodo()}</p>
 
     <div class="card">
       <h2>⚠️ Avisos de ponto</h2>
-
-      <p class="note">
-        Confira os dias úteis atuais e anteriores do período.
-        Feriados não são descontados automaticamente.
-        O dia de hoje aparece como pendente enquanto faltar algum horário.
-      </p>
-
-      <p>
-        <b>${avisos.length}</b> ocorrência(s) para conferir.
-      </p>
-
+      <p class="note">Confira os dias úteis atuais e anteriores do período.</p>
+      <p><b>${avisos.length}</b> ocorrência(s) para conferir.</p>
       ${avisosHtml}
     </div>
 
     <div class="card">
       <h2>Editar ponto do estagiário</h2>
-
-      <p class="note">
-        Selecione o estagiário e a data para carregar os horários.
-        Altere os campos e salve.
-      </p>
-
       <div class="row">
         <label>Estagiário
-          <select id="editNome" onchange="carregarEdicao()">
-            ${opcoes}
-          </select>
+          <select id="editNome" onchange="carregarEdicao()">${opcoes}</select>
         </label>
-
         <label>Data do ponto
-          <input id="editData" type="date"
-            min="${inicio}" max="${fim}"
-            value="${dataInicial}"
-            onchange="carregarEdicao()">
+          <input id="editData" type="date" min="${inicio}" max="${fim}" value="${dataInicial}" onchange="carregarEdicao()">
         </label>
       </div>
 
       <div class="row" style="margin-top:10px">
-        <label>Horário de entrada
-          <input id="editEntrada" type="time">
-        </label>
-
-        <label>Horário de saída
-          <input id="editSaida" type="time">
-        </label>
+        <label>Horário de entrada <input id="editEntrada" type="time"></label>
+        <label>Horário de saída <input id="editSaida" type="time"></label>
       </div>
 
       <div class="actions" style="margin-top:10px">
-        <button type="button" class="s"
-          onclick="carregarEdicao()">
-          Carregar horários
-        </button>
-
-        <button type="button"
-          onclick="editarPonto()">
-          Salvar alterações
-        </button>
+        <button type="button" class="s" onclick="carregarEdicao()">Carregar horários</button>
+        <button type="button" onclick="editarPonto()">Salvar alterações</button>
       </div>
-
       <p id="editMsg" class="msg" aria-live="polite"></p>
     </div>
 
     <div class="card">
       <h2>Relatório de ponto</h2>
-
-      <p>
-        O arquivo inclui faltas de registro, pendências de hoje,
-        atrasos e resumo por estagiário.
-      </p>
-
-      <button type="button"
-        onclick="exportarRelatorioAtrasos()">
-        Gerar relatório de ponto (Excel)
-      </button>
+      <p>Gere a planilha detalhada com todos os dados do período.</p>
+      <button type="button" onclick="exportarRelatorioAtrasos()">Gerar relatório de ponto (Excel)</button>
     </div>
 
     <div class="kpis">
-      <div class="kpi">
-        <b>${L.length}</b>
-        <span>Estagiários</span>
-      </div>
-
-      <div class="kpi">
-        <b>${L.filter(s => s.tA > 0).length}</b>
-        <span>Com atraso</span>
-      </div>
-
-      <div class="kpi">
-        <b>${hm(totalAtrasos)}</b>
-        <span>Atraso somado</span>
-      </div>
-
-      <div class="kpi">
-        <b>${avisos.length}</b>
-        <span>Ocorrências para conferir</span>
-      </div>
+      <div class="kpi"><b>${L.length}</b><span>Estagiários</span></div>
+      <div class="kpi"><b>${L.filter(s => s.tA > 0).length}</b><span>Com atraso</span></div>
+      <div class="kpi"><b>${hm(totalAtrasos)}</b><span>Atraso somado</span></div>
+      <div class="kpi"><b>${avisos.length}</b><span>Ocorrências</span></div>
     </div>
 
     <div class="card wrap">
       <h2>Resumo dos estagiários</h2>
-
       <table>
         <tr>
-          <th>Estagiário</th>
-          <th>Dias com entrada</th>
-          <th>Dias c/ atraso</th>
-          <th>Atraso total</th>
-          <th>Horas trabalhadas</th>
-          <th>Sem saída</th>
-          <th>Status</th>
+          <th>Estagiário</th><th>Dias com entrada</th><th>Dias c/ atraso</th>
+          <th>Atraso total</th><th>Horas trabalhadas</th><th>Sem saída</th><th>Status</th>
         </tr>
-
         ${linhas}
       </table>
     </div>
