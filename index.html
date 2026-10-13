@@ -52,11 +52,12 @@
     <h1>Folha de Ponto</h1>
     <p class="sub">Entre com seu nome completo e sua senha.</p>
     <div class="row" style="flex-direction:column;align-items:stretch">
-      <label>Nome completo<input id="ln" autocomplete="name"></label>
-      <label>Senha<input id="ls" type="password" autocomplete="current-password"></label>
+      <label>Nome completo<input id="ln" autocomplete="name" placeholder="Ex: Layssa"></label>
+      <label>Senha<input id="ls" type="password" autocomplete="current-password" placeholder="123"></label>
       <button id="lb">Entrar</button>
     </div>
     <p id="lm" class="msg bad"></p>
+    <p class="note" style="margin-top:12px">Dica: Supervisor(a): <b>Layssa</b> / Senha: <b>123</b><br>Estagiários: Lucas, Maria Js, Caua, Felipe, Isa, Ana, Jullya, Yaskara, Caio (Treinamento), Pina, Camilli, Juan, Enzo / Senha: <b>123</b></p>
   </div>
 
   <div id="app" style="display:none">
@@ -71,8 +72,25 @@
   </div>
 
   <script>
-    // COLE AQUI A URL DO SEU GOOGLE APPS SCRIPT (TERMINADA EM /exec)
-    const API_URL = "https://script.google.com/macros/s/AKfycbxH1-AVVSFXFTLaRPZvTJ2zlM1M_g0nTSt2RIbIiFA-T53RqHuxNtArswoG_8FWtGu2og/exec";
+    const users = [
+      { nome: "Lucas", senha: "123", role: "estagiario" },
+      { nome: "Maria Js", senha: "123", role: "estagiario" },
+      { nome: "Caua", senha: "123", role: "estagiario" },
+      { nome: "Felipe", senha: "123", role: "estagiario" },
+      { nome: "Isa", senha: "123", role: "estagiario" },
+      { nome: "Ana", senha: "123", role: "estagiario" },
+      { nome: "Jullya", senha: "123", role: "estagiario" },
+      { nome: "Yaskara", senha: "123", role: "estagiario" },
+      { nome: "Caio (Treinamento)", senha: "123", role: "estagiario" },
+      { nome: "Pina", senha: "123", role: "estagiario" },
+      { nome: "Camilli", senha: "123", role: "estagiario" },
+      { nome: "Juan", senha: "123", role: "estagiario" },
+      { nome: "Enzo", senha: "123", role: "estagiario" },
+      { nome: "Layssa", senha: "123", role: "supervisor" }
+    ];
+
+    let cfg = JSON.parse(localStorage.getItem('ponto_cfg') || JSON.stringify({ entrada: '08:00', tol: 10, limite: 60 }));
+    let recs = JSON.parse(localStorage.getItem('ponto_recs') || '[]');
 
     const \$ = s => document.querySelector(s), pad = n => String(n).padStart(2, '0');
     const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
@@ -84,16 +102,11 @@
     const now = new Date();
     let from = iso(new Date(now.getFullYear(), now.getMonth(), 1));
     let to = iso(new Date(now.getFullYear(), now.getMonth() + 1, 0));
-    let S = { nome: '', senha: '', role: '' }, cfg = { entrada: '08:00', tol: 10, limite: 60 }, recs = [], interns = [], msg = '';
+    let S = { nome: '', senha: '', role: '' }, msg = '';
 
-    async function api(body) {
-      if (API_URL.startsWith('COLE_AQUI')) return { ok: false, erro: 'Falta configurar a URL da API.' };
-      try {
-        const r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
-        return await r.json();
-      } catch (e) {
-        return { ok: false, erro: 'Sem conexão com o servidor. Tente de novo.' };
-      }
+    function saveDB() {
+      localStorage.setItem('ponto_recs', JSON.stringify(recs));
+      localStorage.setItem('ponto_cfg', JSON.stringify(cfg));
     }
 
     function dayMap(list) {
@@ -132,17 +145,7 @@
       \$('#pt').onchange = e => { to = e.target.value || to; load(); };
     }
 
-    async function load() {
-      \$('#body').innerHTML = '<p class="note">Carregando…</p>';
-      const r = S.role === 'supervisor' 
-        ? await api({ action: 'todos', senha: S.senha, from, to }) 
-        : await api({ action: 'meus', nome: S.nome, senha: S.senha, from, to });
-      
-      if (!r.ok) {
-        \$('#body').innerHTML = `<div class="card bad">${esc(r.erro)}</div>`;
-        return;
-      }
-      cfg = r.cfg; recs = r.registros; interns = r.estagiarios || [];
+    function load() {
       S.role === 'supervisor' ? viewSup() : viewMine();
     }
 
@@ -169,7 +172,7 @@
             <button class="s" id="bo">Registrar saída</button>
           </div>
           <p class="msg" id="pm">${esc(msg)}</p>
-          <p class="note">O horário registrado é o do servidor e não pode ser alterado por você.</p>
+          <p class="note">O horário registrado é o do dispositivo e atualizado na hora.</p>
         </div>
         <div class="card"><div class="row">${periodBar()}</div></div>
         <div class="kpis">
@@ -185,10 +188,13 @@
         </div>`;
       
       bindPeriod();
-      const punch = async tipo => {
-        $('#bi').disabled = $('#bo').disabled = true;
-        const r = await api({ action: 'punch', nome: S.nome, senha: S.senha, tipo });
-        msg = r.ok ? `${tipo} registrada às ${r.hora}.` : r.erro;
+      const punch = tipo => {
+        const nowD = new Date();
+        const dateStr = iso(nowD);
+        const timeStr = pad(nowD.getHours()) + ':' + pad(nowD.getMinutes());
+        recs.push({ data: dateStr, hora: timeStr, nome: S.nome, tipo: tipo });
+        saveDB();
+        msg = `${tipo} registrada às ${timeStr}.`;
         load();
       };
       \$('#bi').onclick = () => punch('Entrada');
@@ -196,7 +202,8 @@
     }
 
     function viewSup() {
-      const dm = dayMap(recs), g = {};
+      const dm = dayMap(recs), interns = users.filter(u => u.role === 'estagiario').map(u => u.nome);
+      const g = {};
       interns.forEach(n => g[n] = { nome: n, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, lista: [] });
       
       Object.values(dm).forEach(d => {
@@ -240,7 +247,7 @@
             <label>Limite de atraso no período (min)<input type="number" id="c4" min="0" value="${cfg.limite}" style="width:110px"></label>
             <button id="cs">Salvar regras</button>
           </div>
-          <p class="note">Se a chegada passar da tolerância, conta o atraso inteiro; dentro dela, não conta. Entrada = primeiro registro do dia; saída = último.</p>
+          <p class="note">Se a chegada passar da tolerância, conta o atraso inteiro; dentro dela, não conta.</p>
         </div>
         <div class="card"><div class="row">${periodBar()}<button class="s" id="ex">Exportar CSV</button><button class="s" id="rf">Atualizar</button></div></div>
         <div class="kpis">
@@ -257,16 +264,13 @@
 
       bindPeriod();
       \$('#rf').onclick = load;
-      \$('#cs').onclick = async () => {
-        const r = await api({
-          action: 'config',
-          senha: S.senha,
-          entrada: \$('#c1').value || '08:00',
-          tol: \$('#c2').value || 0,
-          limite: \$('#c4').value || 0
-        });
-        if (!r.ok) { alert(r.erro); return; }
+      \$('#cs').onclick = () => {
+        cfg.entrada = \$('#c1').value || '08:00';
+        cfg.tol = Number(\$('#c2').value || 0);
+        cfg.limite = Number(\$('#c4').value || 0);
+        saveDB();
         load();
+        alert('Regras salvas com sucesso!');
       };
       \$('#ex').onclick = () => {
         const csv = '\ufeff' + ['Estagiario;Dias;Dias com atraso;Atraso (min);Horas trabalhadas (min);Sem saida', ...L.map(s => [s.nome, s.dias, s.nA, s.tA, s.tT, s.sem].join(';'))].join('\n');
@@ -277,20 +281,20 @@
       };
     }
 
-    async function entrar(nome, senha) {
+    function entrar(nome, senha) {
       $('#lb').disabled = true; $('#lm').textContent = '';
-      const r = await api({ action: 'login', nome, senha });
+      const u = users.find(x => x.nome.trim().toLowerCase() === String(nome || '').trim().toLowerCase() && x.senha === String(senha || '').trim());
       \$('#lb').disabled = false;
-      if (!r.ok) {
-        \$('#lm').textContent = r.erro;
+      if (!u) {
+        \$('#lm').textContent = 'Utilizador ou senha incorretos.';
         try { sessionStorage.removeItem('s'); } catch (e) {}
         return;
       }
-      S = { nome: r.nome, senha, role: r.role };
-      try { sessionStorage.setItem('s', JSON.stringify({ nome, senha })); } catch (e) {}
+      S = { nome: u.nome, senha: u.senha, role: u.role };
+      try { sessionStorage.setItem('s', JSON.stringify({ nome: u.nome, senha: u.senha })); } catch (e) {}
       $('#login').style.display = 'none'; $('#app').style.display = '';
-      \$('#who').textContent = r.nome;
-      \$('#role').textContent = r.role === 'supervisor' ? 'Tela de monitoria' : 'Meu ponto';
+      \$('#who').textContent = u.nome;
+      \$('#role').textContent = u.role === 'supervisor' ? 'Tela de monitoria' : 'Meu ponto';
       msg = '';
       load();
     }
