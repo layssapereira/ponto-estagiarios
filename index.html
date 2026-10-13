@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head>function registraPonto(tipo)
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Folha de Ponto – Estagiários</title>
@@ -648,7 +648,7 @@ function viewMine() {
 }
 
 /* REGISTRAR ENTRADA OU SAÍDA */
-function registraPonto(tipo) {
+async function registraPonto(tipo) {
   if (S.role !== "estagiario") return;
 
   const agora = new Date();
@@ -661,6 +661,48 @@ function registraPonto(tipo) {
     load();
     return;
   }
+
+  msg = "Salvando ponto no servidor...";
+  load();
+
+  try {
+    const resposta = await fetch(
+      SUPABASE_URL + "/functions/v1/pontos-estagiarios",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          action: "registrar",
+          nome: S.nome,
+          senha: $("#ls").value,
+          tipo: tipo,
+          data: data,
+          hora: hora
+        })
+      }
+    );
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok || !resultado.sucesso) {
+      msg = resultado.erro || "Não foi possível salvar o ponto.";
+      load();
+      return;
+    }
+
+    msg = tipo + " salva no banco de dados às " + hora + ".";
+    load();
+
+  } catch (erro) {
+    console.error(erro);
+    msg = "Erro de conexão. O ponto não foi confirmado pelo servidor.";
+    load();
+  }
+}
 
   const registrosDia = recs.filter(r =>
     r.nome === S.nome &&
