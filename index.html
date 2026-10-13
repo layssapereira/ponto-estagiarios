@@ -704,31 +704,7 @@ async function registraPonto(tipo) {
   }
 }
 
-  const registrosDia = recs.filter(r =>
-    r.nome === S.nome &&
-    r.data === data &&
-    r.tipo === tipo
-  );
 
-  if (registrosDia.length) {
-    msg = "Você já registrou " + tipo.toLowerCase() +
-      " hoje. Procure a supervisora se precisar corrigir.";
-    load();
-    return;
-  }
-
-  recs.push({
-    data,
-    hora,
-    nome: S.nome,
-    tipo
-  });
-
-  saveDB();
-
-  msg = tipo + " registrada às " + hora + ".";
-  load();
-}
 
 /* SITUAÇÃO DO PONTO PARA OS AVISOS E O RELATÓRIO */
 function statusPontoDia(d, data, hoje) {
