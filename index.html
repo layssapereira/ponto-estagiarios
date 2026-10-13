@@ -4,223 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Folha de Ponto – Estagiários</title>
-
   <style>
     :root {
-      --bg: #f5f6f8;
-      --card: #fff;
-      --tx: #1c2630;
-      --mut: #66727f;
-      --bd: #dfe3e8;
-      --ac: #2563eb;
-      --bad: #c62828;
-      --ok: #2e7d32;
-      --warn: #b26a00;
+      --bg:#f5f6f8; --card:#fff; --tx:#1c2630;
+      --mut:#66727f; --bd:#dfe3e8; --ac:#2563eb;
+      --bad:#c62828; --ok:#2e7d32; --warn:#b26a00;
     }
-
-    * { box-sizing: border-box; }
-
+    * { box-sizing:border-box; }
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--tx);
-      font: 15px/1.45 system-ui, -apple-system, sans-serif;
+      margin:0; background:var(--bg); color:var(--tx);
+      font:15px/1.45 system-ui,-apple-system,sans-serif;
     }
-
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    h1 { font-size: 20px; margin: 0; }
-    h2 { font-size: 17px; margin-top: 0; }
-
-    .sub {
-      color: var(--mut);
-      margin: 2px 0 14px;
-      font-size: 13px;
-    }
-
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--bd);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: flex-end;
-    }
-
-    label {
-      display: flex;
-      flex-direction: column;
-      font-size: 12px;
-      color: var(--mut);
-      gap: 3px;
-      flex: 1;
-      min-width: 140px;
-    }
-
-    input, select {
-      font: inherit;
-      color: var(--tx);
-      background: var(--bg);
-      border: 1px solid var(--bd);
-      border-radius: 8px;
-      padding: 9px;
-      width: 100%;
-      margin-top: 3px;
-    }
-
-    button {
-      font: inherit;
-      border: 0;
-      border-radius: 8px;
-      padding: 10px 15px;
-      background: var(--ac);
-      color: #fff;
-      cursor: pointer;
-      font-weight: 600;
-      margin-top: 8px;
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: wait;
-    }
-
-    button.s {
-      background: var(--bg);
-      color: var(--tx);
-      border: 1px solid var(--bd);
-    }
-
-    .wrap { overflow-x: auto; }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      font-size: 14px;
-    }
-
-    th, td {
-      padding: 7px 8px;
-      border-bottom: 1px solid var(--bd);
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    th {
-      font-size: 12px;
-      color: var(--mut);
-      font-weight: 600;
-    }
-
-    .late, .bad {
-      color: var(--bad);
-      font-weight: 600;
-    }
-
-    .ok { color: var(--ok); }
-    .warn { color: var(--warn); }
-
-    .kpis {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .kpi {
-      background: var(--card);
-      border: 1px solid var(--bd);
-      border-radius: 12px;
-      padding: 10px 12px;
-    }
-
-    .kpi b {
-      display: block;
-      font-size: 22px;
-    }
-
-    .kpi span {
-      font-size: 12px;
-      color: var(--mut);
-    }
-
-    .chip {
-      padding: 2px 8px;
-      border-radius: 99px;
-      font-size: 12px;
-      border: 1px solid currentColor;
-    }
-
-    .note {
-      font-size: 12px;
-      color: var(--mut);
-    }
-
-    .msg {
-      margin: 10px 0 0;
-      font-weight: 600;
-    }
-
-    .periodo {
-      font-weight: 600;
-      color: var(--ac);
-      margin: 0 0 12px;
-    }
-
-    details summary { cursor: pointer; }
-
-    #login {
-      max-width: 380px;
-      margin: 40px auto;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    main { max-width:1100px; margin:auto; padding:16px; }
+    h1 { font-size:20px; margin:0; }
+    h2 { font-size:17px; margin-top:0; }
+    .sub { color:var(--mut); margin:2px 0 14px; font-size:13px; }
+    .top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+    .card { background:var(--card); border:1px solid var(--bd); border-radius:12px; padding:14px; margin-bottom:12px; }
+    label { display:flex; flex-direction:column; font-size:12px; color:var(--mut); gap:3px; flex:1; min-width:140px; }
+    input,select { font:inherit; color:var(--tx); background:var(--bg); border:1px solid var(--bd); border-radius:8px; padding:9px; width:100%; margin-top:3px; }
+    button { font:inherit; border:0; border-radius:8px; padding:10px 15px; background:var(--ac); color:white; cursor:pointer; font-weight:600; margin-top:8px; }
+    button:disabled { opacity:.6; cursor:wait; }
+    button.s { background:var(--bg); color:var(--tx); border:1px solid var(--bd); }
+    .wrap { overflow-x:auto; }
+    table { border-collapse:collapse; width:100%; font-size:14px; }
+    th,td { padding:7px 8px; border-bottom:1px solid var(--bd); text-align:left; white-space:nowrap; }
+    th { font-size:12px; color:var(--mut); font-weight:600; }
+    .late,.bad { color:var(--bad); font-weight:600; }
+    .ok { color:var(--ok); } .warn { color:var(--warn); }
+    .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin-bottom:12px; }
+    .kpi { background:var(--card); border:1px solid var(--bd); border-radius:12px; padding:10px 12px; }
+    .kpi b { display:block; font-size:22px; }
+    .kpi span,.note { font-size:12px; color:var(--mut); }
+    .chip { padding:2px 8px; border-radius:99px; font-size:12px; border:1px solid currentColor; }
+    .msg { margin:10px 0 0; font-weight:600; overflow-wrap:anywhere; }
+    .periodo { font-weight:600; color:var(--ac); margin:0 0 12px; }
+    details summary { cursor:pointer; }
+    #login { max-width:380px; margin:40px auto; }
+    .actions { display:flex; flex-wrap:wrap; gap:8px; }
   </style>
 </head>
-
 <body>
 <main>
-
   <div id="login" class="card">
     <h1>Folha de Ponto</h1>
     <p class="sub">Entre com seu nome e sua senha.</p>
-
-    <div style="display:flex;flex-direction:column;gap:10px">
+    <form id="loginForm">
       <label>Nome completo
-        <input id="ln" type="text" placeholder="Digite seu nome" autocomplete="username">
+        <input id="ln" type="text" placeholder="Digite seu nome" autocomplete="username" required>
       </label>
-
       <label>Senha
-        <input id="ls" type="password" placeholder="Digite sua senha" autocomplete="current-password">
+        <input id="ls" type="password" placeholder="Digite sua senha" autocomplete="current-password" required>
       </label>
-
-      <button type="button" id="lb">Entrar</button>
-    </div>
-
-    <p id="lm" class="msg bad"></p>
-
-    <p class="note" style="margin-top:12px">
+      <button type="submit" id="lb">Entrar</button>
+    </form>
+    <p id="lm" class="msg bad" role="status"></p>
+    <p class="note">
       Supervisora: <b>Layssa</b><br>
       Estagiários: Lucas, Maria Js, Caua, Felipe, Isa, Ana,
       Jullya, Yaskara, Caio, Pina, Camilli, Juan e Enzo.
@@ -233,9 +72,8 @@
         <h1 id="who"></h1>
         <p class="sub" id="role"></p>
       </div>
-      <button class="s" onclick="sair()">Sair</button>
+      <button class="s" id="logoutBtn" type="button">Sair</button>
     </div>
-
     <div id="body"></div>
   </div>
 
@@ -245,73 +83,87 @@
 const SUPABASE_URL = "https://nrcpqtrmfxxnemgnfzqz.supabase.co";
 const SUPABASE_KEY = "sb_publishable_6uKw8SGTytkd4w9Q6Cnvcg_KF8tAymw";
 
-const users = [
-  { nome: "Lucas", role: "estagiario" },
-  { nome: "Maria Js", role: "estagiario" },
-  { nome: "Caua", role: "estagiario" },
-  { nome: "Felipe", role: "estagiario" },
-  { nome: "Isa", role: "estagiario" },
-  { nome: "Ana", role: "estagiario" },
-  { nome: "Jullya", role: "estagiario" },
-  { nome: "Yaskara", role: "estagiario" },
-  { nome: "Caio (Treinamento)", role: "estagiario" },
-  { nome: "Pina", role: "estagiario" },
-  { nome: "Camilli", role: "estagiario" },
-  { nome: "Juan", role: "estagiario" },
-  { nome: "Enzo", role: "estagiario" }
-];
-
-let cfg = JSON.parse(
-  localStorage.getItem("ponto_cfg") ||
-  JSON.stringify({ entrada: "08:00", tol: 10, limite: 60 })
-);
-
-let recs = [];
-let S = { nome: "", role: "" };
-let msg = "";
-
-const \$ = s => document.querySelector(s);
+const $ = s => document.querySelector(s);
 const pad = n => String(n).padStart(2, "0");
-const iso = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
-  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-}[c]));
-
+const iso = d => d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+const br = d => d.split("-").reverse().join("/");
 const mins = t => {
   if (!t) return null;
-  const [h, m] = t.split(":").map(Number);
-  return h * 60 + m;
+  const [h,m] = t.split(":").map(Number);
+  return h*60+m;
 };
+const hm = m => m == null ? "—" : Math.floor(m/60) + "h" + pad(m%60);
+const tm = m => m == null ? "—" : pad(Math.floor(m/60)) + ":" + pad(m%60);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+}[c]));
 
-const hm = m => m == null ? "—" : Math.floor(m / 60) + "h" + pad(m % 60);
-const tm = m => m == null ? "—" : pad(Math.floor(m / 60)) + ":" + pad(m % 60);
-const br = d => d.split("-").reverse().join("/");
+const users = [
+  "Lucas","Maria Js","Caua","Felipe","Isa","Ana","Jullya",
+  "Yaskara","Caio (Treinamento)","Pina","Camilli","Juan","Enzo"
+].map(nome => ({nome, role:"estagiario"}));
+
+let cfg;
+try {
+  cfg = JSON.parse(localStorage.getItem("ponto_cfg") ||
+    '{"entrada":"08:00","tol":10,"limite":60}');
+} catch {
+  cfg = {entrada:"08:00", tol:10, limite:60};
+}
+
+let recs = [];
+let S = {nome:"", role:""};
+let senhaSessao = "";
+let msg = "";
+let carregando = false;
+
+async function api(path, options = {}) {
+  const resposta = await fetch(SUPABASE_URL + path, {
+    ...options,
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": "Bearer " + SUPABASE_KEY,
+      ...(options.body ? {"Content-Type":"application/json"} : {}),
+      ...(options.headers || {})
+    }
+  });
+
+  const texto = await resposta.text();
+  let dados = {};
+  try { dados = texto ? JSON.parse(texto) : {}; }
+  catch { throw new Error("O servidor retornou uma resposta inválida."); }
+
+  if (!resposta.ok) {
+    throw new Error(dados.erro || dados.message || "Erro no servidor (" + resposta.status + ").");
+  }
+  return dados;
+}
 
 async function carregarRegistrosSupabase() {
-  try {
-    const resposta = await fetch(
-      SUPABASE_URL + "/functions/v1/pontos-estagiarios?action=listar",
-      {
-        method: "GET",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY
-        }
-      }
-    );
-    if (resposta.ok) {
-      const dados = await resposta.json();
-      if (dados.recs) recs = dados.recs;
-    }
-  } catch (e) {
-    console.error("Erro ao buscar registros do servidor:", e);
+  const dados = await api("/functions/v1/pontos-estagiarios?action=listar");
+  if (!Array.isArray(dados.recs)) {
+    throw new Error("A resposta do servidor não contém a lista de pontos esperada.");
   }
+  recs = dados.recs;
 }
 
 function periodoAtual() {
-  const inicio = new Date(2026, 9, 20, 12, 0, 0);
-  const fim = new Date(2026, 10, 19, 12, 0, 0);
-  return { inicio, fim };
+  const hoje = new Date();
+  hoje.setHours(12,0,0,0);
+  const primeiroInicio = new Date(2026,9,20,12,0,0);
+  let inicio;
+
+  if (hoje < primeiroInicio) {
+    inicio = primeiroInicio;
+  } else {
+    inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 20, 12,0,0);
+    if (hoje < inicio) {
+      inicio = new Date(hoje.getFullYear(), hoje.getMonth()-1, 20, 12,0,0);
+    }
+  }
+
+  const fim = new Date(inicio.getFullYear(), inicio.getMonth()+1, 19, 12,0,0);
+  return {inicio, fim};
 }
 
 function textoPeriodo() {
@@ -324,95 +176,98 @@ function dentroPeriodo(data) {
   return data >= iso(p.inicio) && data <= iso(p.fim);
 }
 
-async function fazerLogin() {
-  const nomeIn = \$("#ln").value.trim();
-  const senhaIn = \$("#ls").value.trim();
-  const mensagem = \$("#lm");
+async function fazerLogin(event) {
+  if (event) event.preventDefault();
+  const nomeIn = $("#ln").value.trim();
+  const senhaIn = $("#ls").value;
+  const mensagem = $("#lm");
 
   if (!nomeIn || !senhaIn) {
     mensagem.textContent = "Informe seu nome e sua senha.";
     return;
   }
 
+  $("#lb").disabled = true;
   mensagem.textContent = "Verificando login...";
-  \$("#lb").disabled = true;
 
   try {
-    const resposta = await fetch(
-      SUPABASE_URL + "/functions/v1/login-estagiarios",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY
-        },
-        body: JSON.stringify({ nome: nomeIn, senha: senhaIn })
-      }
-    );
+    const dados = await api("/functions/v1/login-estagiarios", {
+      method:"POST",
+      body:JSON.stringify({nome:nomeIn, senha:senhaIn})
+    });
 
-    const dados = await resposta.json();
-
-    if (!resposta.ok || !dados.sucesso || !dados.funcionario) {
-      mensagem.textContent = dados.erro || "Nome ou senha incorretos.";
-      return;
+    if (!dados.sucesso || !dados.funcionario) {
+      throw new Error(dados.erro || "Nome ou senha incorretos.");
     }
 
     S = {
       nome: dados.funcionario.nome,
       role: dados.funcionario.perfil
     };
+    senhaSessao = senhaIn;
 
-    \$("#login").style.display = "none";
-    \$("#app").style.display = "";
-    \$("#who").textContent = S.nome;
-    \$("#role").textContent = S.role === "supervisor" ? "Painel da Supervisora" : "Meu Ponto";
-
-    msg = "";
+    $("#ls").value = "";
+    $("#login").style.display = "none";
+    $("#app").style.display = "";
+    $("#who").textContent = S.nome;
+    $("#role").textContent = S.role === "supervisor" ? "Painel da Supervisora" : "Meu Ponto";
     mensagem.textContent = "";
-    
-    await carregarRegistrosSupabase();
-    load();
+    msg = "";
 
+    try {
+      await carregarRegistrosSupabase();
+      load();
+    } catch (erro) {
+      $("#body").innerHTML = '<div class="card msg bad">' +
+        esc(erro.message) +
+        '<p>Confira a conexão e tente atualizar os dados.</p>' +
+        '<button type="button" id="retryBtn">Tentar novamente</button></div>';
+      $("#retryBtn").onclick = async () => {
+        try { await carregarRegistrosSupabase(); load(); }
+        catch (e) { $("#body").innerHTML = '<div class="card msg bad">' + esc(e.message) + '</div>'; }
+      };
+    }
   } catch (erro) {
-    mensagem.textContent = "Não foi possível conectar. Verifique a internet.";
-    console.error(erro);
+    mensagem.textContent = erro.message || "Não foi possível conectar. Verifique a internet.";
   } finally {
-    \$("#lb").disabled = false;
+    $("#lb").disabled = false;
   }
 }
 
 function sair() {
-  S = { nome: "", role: "" };
-  \$("#ls").value = "";
-  \$("#app").style.display = "none";
-  \$("#login").style.display = "";
-  \$("#lm").textContent = "";
+  S = {nome:"", role:""};
+  senhaSessao = "";
+  recs = [];
+  msg = "";
+  $("#ls").value = "";
+  $("#ln").value = "";
+  $("#body").innerHTML = "";
+  $("#app").style.display = "none";
+  $("#login").style.display = "";
+  $("#lm").textContent = "";
 }
 
-\$("#lb").onclick = fazerLogin;
-\$("#ls").onkeydown = e => { if (e.key === "Enter") fazerLogin(); };
+$("#loginForm").addEventListener("submit", fazerLogin);
+$("#logoutBtn").addEventListener("click", sair);
 
 function dayMap(list) {
   const m = {};
   list.forEach(r => {
+    if (!r.nome || !r.data) return;
     const k = r.nome + "|" + r.data;
-    const d = m[k] = m[k] || { nome: r.nome, data: r.data, ent: null, sai: null };
+    const d = m[k] = m[k] || {nome:r.nome, data:r.data, ent:null, sai:null};
     const t = mins(r.hora);
     if (t == null) return;
 
-    if (r.tipo === "Entrada") {
-      if (d.ent == null || t < d.ent) d.ent = t;
-    }
-    if (r.tipo === "Saída") {
-      if (d.sai == null || t > d.sai) d.sai = t;
-    }
+    if (r.tipo === "Entrada" && (d.ent == null || t < d.ent)) d.ent = t;
+    if (r.tipo === "Saída" && (d.sai == null || t > d.sai)) d.sai = t;
   });
 
   Object.values(m).forEach(d => {
     const atraso = d.ent == null ? 0 : d.ent - mins(cfg.entrada);
-    d.atraso = atraso > cfg.tol ? atraso : 0;
-    d.trab = d.ent != null && d.sai != null && d.sai >= d.ent ? d.sai - d.ent : null;
+    d.atraso = atraso > Number(cfg.tol) ? atraso : 0;
+    d.trab = d.ent != null && d.sai != null && d.sai >= d.ent
+      ? d.sai - d.ent : null;
   });
   return m;
 }
@@ -421,62 +276,49 @@ function weekdays() {
   const p = periodoAtual();
   const dias = [];
   const d = new Date(p.inicio);
-
   while (d <= p.fim) {
-    if (d.getDay() !== 0 && d.getDay() !== 6) {
-      dias.push(iso(d));
-    }
-    d.setDate(d.getDate() + 1);
+    if (d.getDay() !== 0 && d.getDay() !== 6) dias.push(iso(d));
+    d.setDate(d.getDate()+1);
   }
   return dias;
 }
 
 function load() {
-  if (S.role === "supervisor") {
-    viewSup();
-  } else if (S.role === "estagiario") {
-    viewMine();
-  }
+  if (S.role === "supervisor") viewSup();
+  else if (S.role === "estagiario") viewMine();
+  else $("#body").textContent = "Perfil de usuário não reconhecido.";
 }
 
 function viewMine() {
   const registros = recs.filter(r => r.nome === S.nome && dentroPeriodo(r.data));
   const dm = dayMap(registros);
   const ds = weekdays();
-
   let tA = 0, nA = 0, tT = 0;
 
   const rows = ds.map(dia => {
     const x = dm[S.nome + "|" + dia] || {};
-    const ent = x.ent ?? null;
-    const sai = x.sai ?? null;
-
+    const ent = x.ent ?? null, sai = x.sai ?? null;
     if (x.atraso) { tA += x.atraso; nA++; }
     tT += x.trab || 0;
 
-    return `
-      <tr>
-        <td>${br(dia)}</td>
-        <td>${tm(ent)}</td>
-        <td>${tm(sai)}</td>
-        <td class="${x.atraso ? "late" : ""}">
-          ${ent == null ? "—" : x.atraso ? x.atraso + " min" : "No horário"}
-        </td>
-        <td>${hm(x.trab)}</td>
-      </tr>
-    `;
+    return `<tr>
+      <td>${br(dia)}</td><td>${tm(ent)}</td><td>${tm(sai)}</td>
+      <td class="${x.atraso ? "late" : ""}">${ent == null ? "—" : x.atraso ? x.atraso + " min" : "No horário"}</td>
+      <td>${hm(x.trab)}</td>
+    </tr>`;
   }).join("");
 
-  \$("#body").innerHTML = `
+  $("#body").innerHTML = `
     <p class="periodo">${textoPeriodo()}</p>
     <div class="card">
       <h2>Registrar ponto</h2>
       <p>Use os botões para registrar seu horário atual.</p>
       <div class="actions">
-        <button type="button" onclick="registraPonto('Entrada')">Registrar entrada</button>
-        <button type="button" onclick="registraPonto('Saída')">Registrar saída</button>
+        <button type="button" id="entradaBtn">Registrar entrada</button>
+        <button type="button" id="saidaBtn">Registrar saída</button>
+        <button type="button" class="s" id="refreshBtn">Atualizar histórico</button>
       </div>
-      <p class="msg">${esc(msg)}</p>
+      <p class="msg" role="status">${esc(msg)}</p>
     </div>
     <div class="kpis">
       <div class="kpi"><b>${hm(tA)}</b><span>Atraso total</span></div>
@@ -484,17 +326,30 @@ function viewMine() {
       <div class="kpi"><b>${hm(tT)}</b><span>Horas trabalhadas</span></div>
     </div>
     <div class="card wrap">
-      <h2>Meu histórico (A partir de 20/10)</h2>
+      <h2>Meu histórico</h2>
       <table>
-        <tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Atraso</th><th>Horas</th></tr>
-        ${rows}
+        <thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Atraso</th><th>Horas</th></tr></thead>
+        <tbody>${rows}</tbody>
       </table>
-    </div>
-  `;
+    </div>`;
+
+  $("#entradaBtn").onclick = () => registraPonto("Entrada");
+  $("#saidaBtn").onclick = () => registraPonto("Saída");
+  $("#refreshBtn").onclick = async () => {
+    try { await carregarRegistrosSupabase(); msg = "Histórico atualizado."; }
+    catch (e) { msg = e.message; }
+    load();
+  };
 }
 
 async function registraPonto(tipo) {
-  if (S.role !== "estagiario") return;
+  if (S.role !== "estagiario" || carregando) return;
+
+  if (!senhaSessao) {
+    msg = "Sua sessão terminou. Saia e entre novamente.";
+    load();
+    return;
+  }
 
   const agora = new Date();
   const data = iso(agora);
@@ -506,70 +361,51 @@ async function registraPonto(tipo) {
     return;
   }
 
+  carregando = true;
   msg = "Salvando ponto no servidor...";
   load();
 
   try {
-    const resposta = await fetch(
-      SUPABASE_URL + "/functions/v1/pontos-estagiarios",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY
-        },
-        body: JSON.stringify({
-          action: "registrar",
-          nome: S.nome,
-          senha: \$("#ls").value,
-          tipo,
-          data,
-          hora
-        })
-      }
-    );
+    const resultado = await api("/functions/v1/pontos-estagiarios", {
+      method:"POST",
+      body:JSON.stringify({
+        action:"registrar",
+        nome:S.nome,
+        senha:senhaSessao,
+        tipo,
+        data,
+        hora
+      })
+    });
 
-    const resultado = await resposta.json();
-    if (!resposta.ok || !resultado.sucesso) {
-      msg = resultado.erro || "Não foi possível salvar o ponto.";
-      load();
-      return;
-    }
-
-    msg = tipo + " salva no banco de dados às " + hora + ".";
+    if (!resultado.sucesso) throw new Error(resultado.erro || "Não foi possível salvar o ponto.");
     await carregarRegistrosSupabase();
-    load();
-
+    msg = tipo + " registrada no banco de dados às " + hora + ".";
   } catch (erro) {
-    console.error(erro);
-    msg = "Erro de conexão com o servidor.";
+    msg = erro.message || "Erro de conexão com o servidor.";
+  } finally {
+    carregando = false;
     load();
   }
 }
 
 function viewSup() {
-  if (S.role !== "supervisor") return;
-
   const p = periodoAtual();
-  const inicio = iso(p.inicio);
-  const fim = iso(p.fim);
-
+  const inicio = iso(p.inicio), fim = iso(p.fim);
   const registros = recs.filter(r => r.data >= inicio && r.data <= fim);
   const dm = dayMap(registros);
-
   const g = {};
+
   users.forEach(u => {
-    g[u.nome] = { nome: u.nome, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, lista: [] };
+    g[u.nome] = {nome:u.nome, dias:0, nA:0, tA:0, tT:0, sem:0, lista:[]};
   });
 
   Object.values(dm).forEach(d => {
-    const s = g[d.nome] = g[d.nome] || { nome: d.nome, dias: 0, nA: 0, tA: 0, tT: 0, sem: 0, lista: [] };
+    const s = g[d.nome] = g[d.nome] || {nome:d.nome, dias:0, nA:0, tA:0, tT:0, sem:0, lista:[]};
     if (d.ent == null) return;
     s.dias++;
     s.tT += d.trab || 0;
     if (d.trab == null) s.sem++;
-
     if (d.atraso > 0) {
       s.nA++;
       s.tA += d.atraso;
@@ -577,34 +413,29 @@ function viewSup() {
     }
   });
 
-  const L = Object.values(g).sort((a, b) => b.tA - a.tA);
-  const totalAtrasos = L.reduce((t, s) => t + s.tA, 0);
-
+  const L = Object.values(g).sort((a,b) => b.tA-a.tA);
+  const totalAtrasos = L.reduce((t,s) => t+s.tA, 0);
   const linhas = L.map(s => {
-    const status = s.tA > cfg.limite ? ["Crítico", "bad"] : s.tA > 0 ? ["Atenção", "warn"] : ["Em dia", "ok"];
-    return `
-      <tr>
-        <td>
-          <details>
-            <summary>${esc(s.nome)}</summary>
-            <div class="note">${s.lista.length ? s.lista.map(esc).join("<br>") : "Nenhum atraso."}</div>
-          </details>
-        </td>
-        <td>${s.dias}</td>
-        <td>${s.nA}</td>
-        <td class="${s.tA ? "late" : ""}">${hm(s.tA)}</td>
-        <td>${hm(s.tT)}</td>
-        <td>${s.sem || "—"}</td>
-        <td><span class="chip ${status[1]}">${status[0]}</span></td>
-      </tr>
-    `;
+    const status = s.tA > Number(cfg.limite)
+      ? ["Crítico","bad"] : s.tA > 0 ? ["Atenção","warn"] : ["Em dia","ok"];
+    return `<tr>
+      <td><details><summary>${esc(s.nome)}</summary>
+        <div class="note">${s.lista.length ? s.lista.map(esc).join("<br>") : "Nenhum atraso."}</div>
+      </details></td>
+      <td>${s.dias}</td><td>${s.nA}</td>
+      <td class="${s.tA ? "late" : ""}">${hm(s.tA)}</td>
+      <td>${hm(s.tT)}</td><td>${s.sem || "—"}</td>
+      <td><span class="chip ${status[1]}">${status[0]}</span></td>
+    </tr>`;
   }).join("");
 
-  \$("#body").innerHTML = `
+  $("#body").innerHTML = `
     <p class="periodo">${textoPeriodo()}</p>
     <div class="card">
-      <h2>Painel da Supervisora (A partir de 20/10)</h2>
-      <p class="note">Acompanhe o resumo de frequência dos estagiários atualizado do banco de dados.</p>
+      <h2>Painel da Supervisora</h2>
+      <p class="note">Resumo dos registros recebidos do banco de dados.</p>
+      <button type="button" id="refreshSupBtn">Atualizar dados</button>
+      <p class="msg" role="status">${esc(msg)}</p>
     </div>
     <div class="kpis">
       <div class="kpi"><b>${L.length}</b><span>Estagiários</span></div>
@@ -614,11 +445,16 @@ function viewSup() {
     <div class="card wrap">
       <h2>Resumo dos estagiários</h2>
       <table>
-        <tr><th>Estagiário</th><th>Dias com entrada</th><th>Dias c/ atraso</th><th>Atraso total</th><th>Horas trabalhadas</th><th>Sem saída</th><th>Status</th></tr>
-        ${linhas}
+        <thead><tr><th>Estagiário</th><th>Dias com entrada</th><th>Dias c/ atraso</th><th>Atraso total</th><th>Horas trabalhadas</th><th>Sem saída</th><th>Status</th></tr></thead>
+        <tbody>${linhas}</tbody>
       </table>
-    </div>
-  `;
+    </div>`;
+
+  $("#refreshSupBtn").onclick = async () => {
+    try { await carregarRegistrosSupabase(); msg = "Dados atualizados."; }
+    catch (e) { msg = e.message; }
+    load();
+  };
 }
 </script>
 </main>
