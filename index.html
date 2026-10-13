@@ -333,19 +333,38 @@ async function carregarRegistrosSupabase() {
   }
 }
 
-/* PERÍODO DO DIA 20 AO DIA 19 */
+/* PERÍODO DO DIA 20 AO DIA 19 (COM TRAVA PARA 20/10) */
 function periodoAtual() {
   const hoje = new Date();
   hoje.setHours(12, 0, 0, 0);
+
   let inicio, fim;
 
-  if (hoje.getDate() >= 20) {
-    inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 20, 12);
-    fim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 19, 12);
-  } else {
-    inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 20, 12);
-    fim = new Date(hoje.getFullYear(), hoje.getMonth(), 19, 12);
+  // Trava temporária para iniciar a partir de 20/10/2026
+  const dataLimiteInicio = new Date(2026, 9, 20, 12, 0, 0);
+  if (hoje < dataLimiteInicio) {
+    inicio = new Date(2026, 9, 20, 12, 0, 0);
+    fim = new Date(2026, 10, 19, 12, 0, 0);
+    return { inicio, fim };
   }
+
+  // A partir de 20/10/2026, atualiza automaticamente pelos próximos períodos
+  if (hoje.getDate() >= 20) {
+    inicio = new Date(
+      hoje.getFullYear(), hoje.getMonth(), 20, 12
+    );
+    fim = new Date(
+      hoje.getFullYear(), hoje.getMonth() + 1, 19, 12
+    );
+  } else {
+    inicio = new Date(
+      hoje.getFullYear(), hoje.getMonth() - 1, 20, 12
+    );
+    fim = new Date(
+      hoje.getFullYear(), hoje.getMonth(), 19, 12
+    );
+  }
+
   return { inicio, fim };
 }
 
