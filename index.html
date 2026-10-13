@@ -308,10 +308,9 @@ async function carregarRegistrosSupabase() {
   }
 }
 
-/* PERÍODO ATUAL FORÇADO A PARTIR DE 20/10 */
 function periodoAtual() {
-  const inicio = new Date(2026, 9, 20, 12, 0, 0); // 20/10/2026
-  const fim = new Date(2026, 10, 19, 12, 0, 0);    // 19/11/2026
+  const inicio = new Date(2026, 9, 20, 12, 0, 0);
+  const fim = new Date(2026, 10, 19, 12, 0, 0);
   return { inicio, fim };
 }
 
@@ -418,7 +417,6 @@ function dayMap(list) {
   return m;
 }
 
-/* DIAS ÚTEIS DO PERÍODO */
 function weekdays() {
   const p = periodoAtual();
   const dias = [];
@@ -550,32 +548,15 @@ async function registraPonto(tipo) {
   }
 }
 
-function statusPontoDia(d, data, hoje) {
-  const ent = d ? d.ent : null;
-  const sai = d ? d.sai : null;
-  const atraso = d ? (d.atraso || 0) : 0;
-
-  if (ent == null && sai == null) {
-    return data === hoje ? "Pendente hoje" : "Falta do dia";
-  }
-  if (ent == null) return "Falta de entrada";
-  if (sai == null) return data === hoje ? "Saída pendente hoje" : "Falta de saída";
-  if (atraso > 0) return "Atraso de " + atraso + " minutos";
-  return "Completo";
-}
-
 function viewSup() {
   if (S.role !== "supervisor") return;
 
   const p = periodoAtual();
   const inicio = iso(p.inicio);
   const fim = iso(p.fim);
-  const hoje = iso(new Date());
-  const limite = hoje < fim ? hoje : fim;
 
   const registros = recs.filter(r => r.data >= inicio && r.data <= fim);
   const dm = dayMap(registros);
-  const dias = weekdays().filter(d => d >= inicio && d <= limite);
 
   const g = {};
   users.forEach(u => {
